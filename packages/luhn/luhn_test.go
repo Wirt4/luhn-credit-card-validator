@@ -49,3 +49,15 @@ func TestIsValid(t *testing.T) {
 		t.Errorf("%v should be valid", mockNumbers.GetSequence())
 	}
 }
+
+func TestEmptySequence(t *testing.T) {
+	mockNumbers := &mockDigitSeqence{
+		sequence: []int{},
+	}
+
+	actual := IsValid(mockNumbers)
+
+	if actual != false {
+		t.Errorf("%v should not be valid", mockNumbers.GetSequence())
+	}
+}
