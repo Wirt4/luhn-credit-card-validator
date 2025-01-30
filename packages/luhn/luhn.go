@@ -5,6 +5,9 @@ import (
 )
 
 func IsValid(sequence interfaces.DigitSequence) bool {
+	if !sequence.HasCorrectLength() {
+		return false
+	}
 	var s = sequence.GetSequence()
 	if len(s) < 2 {
 		return false
