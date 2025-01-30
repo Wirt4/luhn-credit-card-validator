@@ -1,7 +1,7 @@
 package interfaces
 
 type Validtator interface {
-	Validate(sequence DigitSequence) bool
+	IsValid(sequence DigitSequence) bool
 }
 
 type DigitSequence interface {
