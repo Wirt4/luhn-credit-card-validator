@@ -15,7 +15,6 @@ func (m *mockDigitSeqence) GetSequence() []int {
 }
 
 func TestIsValid(t *testing.T) {
-	// Arrange
 	mockNumbers := &mockDigitSeqence{
 		sequence: []int{1, 2, 5},
 	}
@@ -25,5 +24,16 @@ func TestIsValid(t *testing.T) {
 	if actual != true {
 		t.Errorf("%v should be valid", mockNumbers.GetSequence())
 	}
+}
 
+func TestIsInvalid(t *testing.T) {
+	mockNumbers := &mockDigitSeqence{
+		sequence: []int{1, 2, 4},
+	}
+
+	actual := IsValid(mockNumbers)
+
+	if actual != false {
+		t.Errorf("%v should not be valid", mockNumbers.GetSequence())
+	}
 }
