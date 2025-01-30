@@ -26,5 +26,9 @@ func (c *CreditCard) GetSequence() []int {
 }
 
 func isNumber(r rune) bool {
-	return r >= '1' && r <= '9'
+	return r >= '0' && r <= '9'
+}
+
+func (c *CreditCard) HasCorrectLength() bool {
+	return len(c.sequence) == 16
 }

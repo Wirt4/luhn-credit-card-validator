@@ -40,3 +40,21 @@ func TestDelimitedStringInput(t *testing.T) {
 		t.Errorf("Expected %v, got %v", expected, actual)
 	}
 }
+
+//want a test to include zeros
+
+func TestHasCorrectLength(t *testing.T) {
+	card := NewCreditCard()
+	card.SetSequence("1234 5678 9111 1111 90")
+	if card.HasCorrectLength() {
+		t.Errorf("Expected false, got true")
+	}
+}
+
+func TestHasCorrectLengthWithZero(t *testing.T) {
+	card := NewCreditCard()
+	card.SetSequence("1234 5678 9111 1101")
+	if !card.HasCorrectLength() {
+		t.Errorf("Expected true, got false")
+	}
+}
