@@ -41,8 +41,6 @@ func TestDelimitedStringInput(t *testing.T) {
 	}
 }
 
-//want a test to include zeros
-
 func TestHasCorrectLength(t *testing.T) {
 	card := NewCreditCard()
 	card.SetSequence("1234 5678 9111 1111 90")

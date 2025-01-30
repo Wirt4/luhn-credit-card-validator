@@ -1,6 +1,5 @@
 package credit_card
 
-// TODO: Implement the CreditCard struct and functions based off the interface "NumberSequence"
 type CreditCard struct {
 	sequence []int
 }
@@ -15,7 +14,6 @@ func (c *CreditCard) SetSequence(sequence string) {
 			c.sequence = append(c.sequence, int(v-'0'))
 		}
 	}
-
 }
 
 func (c *CreditCard) GetSequence() []int {
