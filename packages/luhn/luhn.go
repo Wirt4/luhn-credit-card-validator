@@ -5,68 +5,48 @@ import (
 )
 
 func IsValid(sequence interfaces.DigitSequence) bool {
-	stack := newStackFromSequence(sequence.GetSequence())
-	check_digit := stack.pop()
-	return check_digit == calculateCheckDigit(stack)
-}
-
-func calculateCheckDigit(stack *stack) int {
-	odd := stack.size()%2 != 0
-	sum := 0
-	for !stack.isEmpty() {
-		digit := stack.pop()
-		if odd {
-			sum += digit
-		} else {
-			sum += sumDigit(digit)
-		}
-		odd = !odd
+	var s = sequence.GetSequence()
+	if len(s) < 2 {
+		return false
 	}
-	return (10 - (sum % 10)) % 10
+
+	lastIndex := len(s) - 1
+	checkDigit := s[lastIndex]
+	s = s[:lastIndex]
+	var sum = 0
+
+	for i, v := range s {
+		if i%2 == 0 {
+			sum += v
+		} else {
+			sum += sumDigit(v)
+		}
+	}
+
+	return modulateDigit(sum) == checkDigit
 }
 
 func sumDigit(digit int) int {
 	digit *= 2
+
 	if digit > 9 {
 		return addDigits(digit)
 	}
+
 	return digit
 }
 
 func addDigits(digit int) int {
 	sum := 0
+
 	for digit > 0 {
 		sum += digit % 10
 		digit /= 10
 	}
+
 	return sum
 }
 
-type stack struct {
-	sequence []int
-}
-
-func (s *stack) size() int {
-	return len(s.sequence)
-}
-
-func newStackFromSequence(sequence []int) *stack {
-	s := &stack{
-		sequence: sequence,
-	}
-	return s
-}
-
-func (s *stack) isEmpty() bool {
-	return len(s.sequence) == 0
-}
-
-func (s *stack) pop() int {
-	if len(s.sequence) == 0 {
-		return -1
-	}
-	lastIndex := len(s.sequence) - 1
-	lastDigit := s.sequence[lastIndex]
-	s.sequence = s.sequence[:lastIndex]
-	return lastDigit
+func modulateDigit(digit int) int {
+	return (10 - digit%10) % 10
 }
