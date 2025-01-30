@@ -16,3 +16,27 @@ func TestUndelimitedStringInput(t *testing.T) {
 		t.Errorf("Expected %v, got %v", expected, actual)
 	}
 }
+
+func TestUndelimitedStringInputDifferentData(t *testing.T) {
+	expected := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 1, 1, 1, 1, 1, 1}
+	card := NewCreditCard()
+
+	card.SetSequence("1234567891111111")
+	actual := card.GetSequence()
+
+	if !reflect.DeepEqual(expected, actual) {
+		t.Errorf("Expected %v, got %v", expected, actual)
+	}
+}
+
+func TestDelimitedStringInput(t *testing.T) {
+	expected := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 1, 1, 1, 1, 1, 1}
+	card := NewCreditCard()
+
+	card.SetSequence("1234 5678 9111 1111")
+	actual := card.GetSequence()
+
+	if !reflect.DeepEqual(expected, actual) {
+		t.Errorf("Expected %v, got %v", expected, actual)
+	}
+}
