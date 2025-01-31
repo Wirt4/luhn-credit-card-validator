@@ -7,7 +7,7 @@ import (
 
 func TestUndelimitedStringInput(t *testing.T) {
 	expected := []int{4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-	card := NewCreditCard()
+	card := &CreditCard{}
 
 	card.SetSequence("4111111111111111")
 	actual := card.GetSequence()
@@ -19,7 +19,7 @@ func TestUndelimitedStringInput(t *testing.T) {
 
 func TestUndelimitedStringInputDifferentData(t *testing.T) {
 	expected := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 1, 1, 1, 1, 1, 1}
-	card := NewCreditCard()
+	card := &CreditCard{}
 
 	card.SetSequence("1234567891111111")
 	actual := card.GetSequence()
@@ -31,8 +31,7 @@ func TestUndelimitedStringInputDifferentData(t *testing.T) {
 
 func TestDelimitedStringInput(t *testing.T) {
 	expected := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 1, 1, 1, 1, 1, 1}
-	card := NewCreditCard()
-
+	card := &CreditCard{}
 	card.SetSequence("1234 5678 9111 1111")
 	actual := card.GetSequence()
 
@@ -42,7 +41,7 @@ func TestDelimitedStringInput(t *testing.T) {
 }
 
 func TestHasCorrectLength(t *testing.T) {
-	card := NewCreditCard()
+	card := &CreditCard{}
 	card.SetSequence("1234 5678 9111 1111 90")
 	if card.HasCorrectLength() {
 		t.Errorf("Expected false, got true")
@@ -50,7 +49,7 @@ func TestHasCorrectLength(t *testing.T) {
 }
 
 func TestHasCorrectLengthWithZero(t *testing.T) {
-	card := NewCreditCard()
+	card := &CreditCard{}
 	card.SetSequence("1234 5678 9111 1101")
 	if !card.HasCorrectLength() {
 		t.Errorf("Expected true, got false")

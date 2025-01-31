@@ -4,10 +4,6 @@ type CreditCard struct {
 	sequence []int
 }
 
-func NewCreditCard() CreditCard {
-	return CreditCard{}
-}
-
 func (c *CreditCard) SetSequence(sequence string) {
 	for _, v := range sequence {
 		if v >= '0' && v <= '9' {
@@ -16,7 +12,7 @@ func (c *CreditCard) SetSequence(sequence string) {
 	}
 }
 
-func (c *CreditCard) GetSequence() []int {
+func (c CreditCard) GetSequence() []int {
 	return c.sequence
 }
 

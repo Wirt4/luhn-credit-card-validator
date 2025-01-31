@@ -26,18 +26,21 @@ func TestCheckMethod(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.method, func(t *testing.T) {
-			errorHandler := NewErrorHandler()
-			errorHandler.HasError = test.initialHasError
+			errorHandler := &GetErrorHandler{
+				message:  "",
+				code:     http.StatusOK,
+				hasError: test.initialHasError,
+			}
 			errorHandler.CheckMethod(test.method)
 
-			if errorHandler.HasError != test.expectedError {
-				t.Errorf("Expected HasError to be %v, got %v", test.expectedError, errorHandler.HasError)
+			if errorHandler.HasError() != test.expectedError {
+				t.Errorf("Expected HasError to be %v, got %v", test.expectedError, errorHandler.HasError())
 			}
-			if errorHandler.Message != test.expectedMessage {
-				t.Errorf("Expected Message to be %v, got %v", test.expectedMessage, errorHandler.Message)
+			if errorHandler.GetMessage() != test.expectedMessage {
+				t.Errorf("Expected Message to be %v, got %v", test.expectedMessage, errorHandler.GetMessage())
 			}
-			if errorHandler.Code != test.expectedCode {
-				t.Errorf("Expected Code to be %v, got %v", test.expectedCode, errorHandler.Code)
+			if errorHandler.GetCode() != test.expectedCode {
+				t.Errorf("Expected Code to be %v, got %v", test.expectedCode, errorHandler.GetCode())
 			}
 		})
 	}
@@ -93,21 +96,25 @@ func TestCheckBody(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			errorHandler := NewErrorHandler()
-			errorHandler.HasError = test.initialHasError
+			errorHandler := &GetErrorHandler{
+				message:  "",
+				code:     http.StatusOK,
+				hasError: test.initialHasError,
+			}
+
 			errorHandler.CheckBody(test.body)
 
-			if errorHandler.HasError != test.expectedError {
-				t.Errorf("Expected HasError to be %v, got %v", test.expectedError, errorHandler.HasError)
+			if errorHandler.HasError() != test.expectedError {
+				t.Errorf("Expected HasError to be %v, got %v", test.expectedError, errorHandler.HasError())
 			}
-			if errorHandler.Message != test.expectedMessage {
-				t.Errorf("Expected Message to be %v, got %v", test.expectedMessage, errorHandler.Message)
+			if errorHandler.GetMessage() != test.expectedMessage {
+				t.Errorf("Expected Message to be %v, got %v", test.expectedMessage, errorHandler.GetMessage())
 			}
-			if errorHandler.Code != test.expectedCode {
-				t.Errorf("Expected Code to be %v, got %v", test.expectedCode, errorHandler.Code)
+			if errorHandler.GetCode() != test.expectedCode {
+				t.Errorf("Expected Code to be %v, got %v", test.expectedCode, errorHandler.GetCode())
 			}
-			if !reflect.DeepEqual(errorHandler.Parsed, test.expectedParsed) {
-				t.Errorf("Expected Parsed to be %v, got %v", test.expectedParsed, errorHandler.Parsed)
+			if !reflect.DeepEqual(errorHandler.GetParsed(), test.expectedParsed) {
+				t.Errorf("Expected Parsed to be %v, got %v", test.expectedParsed, errorHandler.GetParsed())
 			}
 		})
 	}

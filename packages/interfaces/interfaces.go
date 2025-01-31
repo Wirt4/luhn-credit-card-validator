@@ -23,7 +23,11 @@ type Handler interface {
 	HandleRequest(w http.ResponseWriter, r *http.Request)
 }
 
-type ErrorHandler interface {
+type ErrorHandler[T any] interface {
 	CheckMethod(method string)
 	CheckBody(body io.ReadCloser)
+	HasError() bool
+	GetMessage() string
+	GetCode() int
+	GetParsed() T
 }

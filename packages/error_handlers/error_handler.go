@@ -9,29 +9,29 @@ import (
 )
 
 type GetErrorHandler struct {
-	Message  string
-	Code     int
-	HasError bool
-	Parsed   types.CreditCardPayload
+	message  string
+	code     int
+	hasError bool
+	parsed   types.CreditCardPayload
 }
 
 func NewErrorHandler() *GetErrorHandler {
 	return &GetErrorHandler{
-		Message:  "",
-		Code:     http.StatusOK,
-		HasError: false,
-		Parsed:   types.CreditCardPayload{},
+		message:  "",
+		code:     http.StatusOK,
+		hasError: false,
+		parsed:   types.CreditCardPayload{},
 	}
 }
 
 func (h *GetErrorHandler) CheckMethod(method string) {
-	if method != http.MethodGet && !h.HasError {
+	if method != http.MethodGet && !h.hasError {
 		h.setError("Only GET requests are allowed", http.StatusMethodNotAllowed)
 	}
 }
 
 func (h *GetErrorHandler) CheckBody(body io.ReadCloser) {
-	if h.HasError {
+	if h.hasError {
 		return
 	}
 
@@ -41,13 +41,29 @@ func (h *GetErrorHandler) CheckBody(body io.ReadCloser) {
 		return
 	}
 
-	if err := json.Unmarshal(b, &h.Parsed); err != nil {
+	if err := json.Unmarshal(b, &h.parsed); err != nil {
 		h.setError("Error parsing request body", http.StatusBadRequest)
 	}
 }
 
+func (h *GetErrorHandler) HasError() bool {
+	return h.hasError
+}
+
+func (h *GetErrorHandler) GetMessage() string {
+	return h.message
+}
+
+func (h *GetErrorHandler) GetCode() int {
+	return h.code
+}
+
+func (h *GetErrorHandler) GetParsed() types.CreditCardPayload {
+	return h.parsed
+}
+
 func (h *GetErrorHandler) setError(message string, code int) {
-	h.Message = message
-	h.Code = code
-	h.HasError = true
+	h.message = message
+	h.code = code
+	h.hasError = true
 }

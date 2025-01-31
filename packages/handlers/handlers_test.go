@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"main.go/packages/credit_card"
+	"main.go/packages/factories"
 	"main.go/packages/interfaces"
 	"main.go/packages/types"
 )
@@ -29,7 +29,7 @@ func TestOnlyShouldAllowGetRequests(t *testing.T) {
 	expectedBody := "Only GET requests are allowed\n"
 	mockHandler := NewHandler(&mockValidator{})
 
-	mockHandler.HandleGetRequest(w, r)
+	mockHandler.HandleRequest(w, r)
 	response := w.Result()
 	body := w.Body.String()
 
@@ -47,7 +47,7 @@ func TestOnlyShouldAllowGetRequestsDifferentData(t *testing.T) {
 	nonExpectedBody := "{\"ErrorMessage\":\"Only GET requests are allowed\"}"
 	mockHandler := NewHandler(&mockValidator{valid: true})
 
-	mockHandler.HandleGetRequest(w, r)
+	mockHandler.HandleRequest(w, r)
 	response := w.Result()
 	body := w.Body.String()
 
@@ -65,7 +65,7 @@ func TestIfValidatorReturnsTrue(t *testing.T) {
 	expectedBody := "{\"ValidCreditCardNumber\":true}\n"
 	mockHandler := NewHandler(&mockValidator{valid: true})
 
-	mockHandler.HandleGetRequest(w, r)
+	mockHandler.HandleRequest(w, r)
 	response := w.Result()
 	body := w.Body.String()
 
@@ -83,7 +83,7 @@ func TestIfValidatorReturnsFalse(t *testing.T) {
 	expectedBody := "{\"ValidCreditCardNumber\":false}\n"
 	mockHandler := NewHandler(&mockValidator{valid: false})
 
-	mockHandler.HandleGetRequest(w, r)
+	mockHandler.HandleRequest(w, r)
 	response := w.Result()
 	body := w.Body.String()
 
@@ -97,16 +97,16 @@ func TestIfValidatorReturnsFalse(t *testing.T) {
 
 func TestParametersPassedToHandler(t *testing.T) {
 	inputSequence := "4321 8756 2109 6543"
-	expected := credit_card.NewCreditCard()
+	expected := factories.CreditCardFactory()
 	expected.SetSequence(inputSequence)
 	r := constructRequest("GET", types.CreditCardPayload{CreditCardNumber: inputSequence})
 	w := httptest.NewRecorder()
 	mockValidator := &mockValidator{}
 	mockHandler := NewHandler(mockValidator)
 
-	mockHandler.HandleGetRequest(w, r)
+	mockHandler.HandleRequest(w, r)
 
-	if !reflect.DeepEqual(&expected, mockValidator.calledWith) {
+	if !reflect.DeepEqual(expected, mockValidator.calledWith) {
 		t.Errorf("Expected sequence %v, got %v", expected, mockValidator.calledWith)
 	}
 }
@@ -116,7 +116,7 @@ func TestHandleGetRequestInvalidMethod(t *testing.T) {
 	expectedBody := "Only GET requests are allowed\n"
 	mockHandler := NewHandler(&mockValidator{})
 
-	mockHandler.HandleGetRequest(w, r)
+	mockHandler.HandleRequest(w, r)
 	response := w.Result()
 	body := w.Body.String()
 
@@ -134,7 +134,7 @@ func TestHandleGetRequestValidCreditCard(t *testing.T) {
 	expectedBody := "{\"ValidCreditCardNumber\":true}\n"
 	mockHandler := NewHandler(&mockValidator{valid: true})
 
-	mockHandler.HandleGetRequest(w, r)
+	mockHandler.HandleRequest(w, r)
 	response := w.Result()
 	body := w.Body.String()
 
@@ -152,7 +152,7 @@ func TestHandleGetRequestInvalidCreditCard(t *testing.T) {
 	expectedBody := "{\"ValidCreditCardNumber\":false}\n"
 	mockHandler := NewHandler(&mockValidator{valid: false})
 
-	mockHandler.HandleGetRequest(w, r)
+	mockHandler.HandleRequest(w, r)
 	response := w.Result()
 	body := w.Body.String()
 

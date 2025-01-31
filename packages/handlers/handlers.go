@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"main.go/packages/credit_card"
-	"main.go/packages/error_handlers"
+	"main.go/packages/factories"
 	"main.go/packages/interfaces"
 	"main.go/packages/types"
 )
@@ -25,23 +24,23 @@ func NewHandler(validator interfaces.Validator) *GetHandler {
 }
 
 func (h *GetHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
-	errorHandler := error_handlers.NewErrorHandler()
+	errorHandler := factories.ErrorHandlerFactory()
 	errorHandler.CheckMethod(r.Method)
 	errorHandler.CheckBody(r.Body)
-	if errorHandler.HasError {
-		message := errorHandler.Message
+	if errorHandler.HasError() {
+		message := errorHandler.GetMessage()
 		http.Error(w, message, http.StatusMethodNotAllowed)
 		return
 	}
-	is_valid := h.isValid(errorHandler.Parsed)
+	is_valid := h.isValid(errorHandler.GetParsed())
 	response := response{ValidCreditCardNumber: is_valid}
 	writeResponse(w, response)
 }
 
 func (h *GetHandler) isValid(payload types.CreditCardPayload) bool {
-	card := credit_card.NewCreditCard()
+	card := factories.CreditCardFactory()
 	card.SetSequence(payload.CreditCardNumber)
-	return h.validator.IsValid(&card)
+	return h.validator.IsValid(card)
 }
 func writeResponse(w http.ResponseWriter, response response) {
 	w.WriteHeader(http.StatusOK)
