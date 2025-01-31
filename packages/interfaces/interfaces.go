@@ -1,5 +1,10 @@
 package interfaces
 
+import (
+	"io"
+	"net/http"
+)
+
 type Validator interface {
 	IsValid(sequence DigitSequence) bool
 }
@@ -10,4 +15,19 @@ type DigitSequence interface {
 	HasCorrectLength() bool
 }
 
-//TODO: implement Configuration Interface
+type Configuration interface {
+	GetConfiguration() map[string]string
+}
+
+type Handler interface {
+	HandleRequest(w http.ResponseWriter, r *http.Request)
+}
+
+type ErrorHandler[T any] interface {
+	CheckMethod(method string)
+	CheckBody(body io.ReadCloser)
+	HasError() bool
+	GetMessage() string
+	GetCode() int
+	GetParsed() T
+}
