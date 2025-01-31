@@ -88,3 +88,28 @@ func TestIfValidatorReturnsTrue(t *testing.T) {
 		t.Errorf("Expected body %v, got %v", expectedBody, body)
 	}
 }
+
+func TestIfValidatorReturnsFalse(t *testing.T) {
+	r := http.Request{
+		Method: "GET",
+	}
+	w := httptest.NewRecorder()
+	expectedBody := "{\"ValidCreditCardNumber\":false}\n"
+
+	mockHandler := Handler{
+		validator: &mockValidator{
+			valid: false,
+		},
+	}
+
+	mockHandler.HandleGetRequest(w, &r)
+	response := w.Result()
+	body := w.Body.String()
+
+	if response.StatusCode != http.StatusOK {
+		t.Errorf("Expected status code %v, got %v", http.StatusOK, response.StatusCode)
+	}
+	if body != expectedBody {
+		t.Errorf("Expected body %v, got %v", expectedBody, body)
+	}
+}

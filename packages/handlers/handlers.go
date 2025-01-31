@@ -28,6 +28,6 @@ func (h *Handler) HandleGetRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	response := response{ValidCreditCardNumber: true}
+	response := response{ValidCreditCardNumber: h.validator.IsValid(nil)}
 	encoder.Encode(response)
 }
