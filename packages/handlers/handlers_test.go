@@ -12,11 +12,19 @@ import (
 )
 
 type MockDigitSequence struct {
-	sequence []int
+	sequence string
 }
 
-func (m MockDigitSequence) GetSequence() []int {
-	return m.sequence
+func (m *MockDigitSequence) SetSequence(sequence string) {
+	m.sequence = sequence
+}
+
+func (m *MockDigitSequence) GetSequence() []int {
+	return []int{}
+}
+
+func (m *MockDigitSequence) HasCorrectLength() bool {
+	return true
 }
 
 type mockValidator struct {
@@ -33,9 +41,7 @@ func TestOnlyShouldAllowGetRequests(t *testing.T) {
 	r := constructRequest("POST", Payload{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
 	expectedBody := "{\"ErrorMessage\":\"Only GET requests are allowed\"}\n"
-	mockHandler := Handler{
-		validator: &mockValidator{},
-	}
+	mockHandler := NewHandler(&mockValidator{}, &MockDigitSequence{})
 
 	mockHandler.HandleGetRequest(w, r)
 	response := w.Result()
@@ -53,12 +59,7 @@ func TestOnlyShouldAllowGetRequestsDifferentData(t *testing.T) {
 	r := constructRequest("GET", Payload{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
 	nonExpectedBody := "{\"ErrorMessage\":\"Only GET requests are allowed\"}"
-
-	mockHandler := Handler{
-		validator: &mockValidator{
-			valid: true,
-		},
-	}
+	mockHandler := NewHandler(&mockValidator{valid: true}, &MockDigitSequence{})
 
 	mockHandler.HandleGetRequest(w, r)
 	response := w.Result()
@@ -76,8 +77,7 @@ func TestIfValidatorReturnsTrue(t *testing.T) {
 	r := constructRequest("GET", Payload{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
 	expectedBody := "{\"ValidCreditCardNumber\":true}\n"
-
-	mockHandler := NewHandler(&mockValidator{valid: true})
+	mockHandler := NewHandler(&mockValidator{valid: true}, &MockDigitSequence{})
 
 	mockHandler.HandleGetRequest(w, r)
 	response := w.Result()
@@ -95,12 +95,7 @@ func TestIfValidatorReturnsFalse(t *testing.T) {
 	r := constructRequest("GET", Payload{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
 	expectedBody := "{\"ValidCreditCardNumber\":false}\n"
-
-	mockHandler := Handler{
-		validator: &mockValidator{
-			valid: false,
-		},
-	}
+	mockHandler := NewHandler(&mockValidator{valid: false}, &MockDigitSequence{})
 
 	mockHandler.HandleGetRequest(w, r)
 	response := w.Result()
@@ -115,18 +110,19 @@ func TestIfValidatorReturnsFalse(t *testing.T) {
 }
 
 func TestParametersPassedToHandler(t *testing.T) {
-	r := constructRequest("GET", Payload{CreditCardNumber: "1234 5678 9012 3456"})
+	r := http.Request{
+		Method: "GET",
+	}
 	w := httptest.NewRecorder()
 	mockValidator := &mockValidator{}
-	mockHandler := NewHandler(mockValidator)
-	expectedArgument := MockDigitSequence{
-		sequence: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6},
-	}
+	mockHandler := NewHandler(mockValidator, &MockDigitSequence{})
+	expectedSequence := "1234 5678 9012 3456"
 
-	mockHandler.HandleGetRequest(w, r)
+	mockHandler.HandleGetRequest(w, &r)
 
-	if !reflect.DeepEqual(mockValidator.calledWith.GetSequence(), expectedArgument.GetSequence()) {
-		t.Errorf("Expected digits object of  %v, got %v", expectedArgument, mockValidator.calledWith)
+	// Verify the sequence passed to SetSequence
+	if mockValidator.calledWith.(*MockDigitSequence).sequence != expectedSequence {
+		t.Errorf("Expected sequence %v, got %v", expectedSequence, mockValidator.calledWith.(*MockDigitSequence).sequence)
 	}
 }
 
