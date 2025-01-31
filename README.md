@@ -4,13 +4,12 @@
 
 ###The App
 `go run main.go` for a quick run
-`go build` to produce the executable
+`go build main.go` to produce the executable
 
 Note that the command line will run the server until you manually kill it.
 
 ###The Tests
 `go test ./...` from the root
-
 
 ##Using
 
