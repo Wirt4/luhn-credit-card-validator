@@ -1,3 +1,5 @@
 package handlers
 
-func HandleGetRequest() {}
+import "net/http"
+
+func HandleGetRequest(w http.ResponseWriter, r *http.Request) {}
