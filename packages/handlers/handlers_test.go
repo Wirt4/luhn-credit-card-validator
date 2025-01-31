@@ -4,7 +4,17 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"main.go/packages/interfaces"
 )
+
+type mockValidator struct {
+	valid bool
+}
+
+func (m *mockValidator) IsValid(sequence interfaces.DigitSequence) bool {
+	return m.valid
+}
 
 func TestOnlyShouldAllowGetRequests(t *testing.T) {
 	r := http.Request{
@@ -12,8 +22,11 @@ func TestOnlyShouldAllowGetRequests(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	expectedBody := "Only GET requests are allowed\n"
+	mockHandler := Handler{
+		validator: &mockValidator{},
+	}
 
-	HandleGetRequest(w, &r)
+	mockHandler.HandleGetRequest(w, &r)
 	response := w.Result()
 	body := w.Body.String()
 
@@ -32,7 +45,13 @@ func TestOnlyShouldAllowGetRequestsDifferentData(t *testing.T) {
 	w := httptest.NewRecorder()
 	nonExpectedBody := "Only GET requests are allowed\n"
 
-	HandleGetRequest(w, &r)
+	mockHandler := Handler{
+		validator: &mockValidator{
+			valid: true,
+		},
+	}
+
+	mockHandler.HandleGetRequest(w, &r)
 	response := w.Result()
 	body := w.Body.String()
 
@@ -41,5 +60,30 @@ func TestOnlyShouldAllowGetRequestsDifferentData(t *testing.T) {
 	}
 	if body == nonExpectedBody {
 		t.Errorf("Expected body other than \"%v\"", nonExpectedBody)
+	}
+}
+
+func TestIfValidatorReturnsTrue(t *testing.T) {
+	r := http.Request{
+		Method: "GET",
+	}
+	w := httptest.NewRecorder()
+	expectedBody := "{\"ValidCreditCardNumber\":true}\n"
+
+	mockHandler := Handler{
+		validator: &mockValidator{
+			valid: true,
+		},
+	}
+
+	mockHandler.HandleGetRequest(w, &r)
+	response := w.Result()
+	body := w.Body.String()
+
+	if response.StatusCode != http.StatusOK {
+		t.Errorf("Expected status code %v, got %v", http.StatusOK, response.StatusCode)
+	}
+	if body != expectedBody {
+		t.Errorf("Expected body %v, got %v", expectedBody, body)
 	}
 }
