@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"bytes"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -28,16 +30,14 @@ func (m *mockValidator) IsValid(sequence interfaces.DigitSequence) bool {
 }
 
 func TestOnlyShouldAllowGetRequests(t *testing.T) {
-	r := http.Request{
-		Method: "POST",
-	}
+	r := constructRequest("POST", Payload{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
 	expectedBody := "{\"ErrorMessage\":\"Only GET requests are allowed\"}\n"
 	mockHandler := Handler{
 		validator: &mockValidator{},
 	}
 
-	mockHandler.HandleGetRequest(w, &r)
+	mockHandler.HandleGetRequest(w, r)
 	response := w.Result()
 	body := w.Body.String()
 
@@ -50,9 +50,7 @@ func TestOnlyShouldAllowGetRequests(t *testing.T) {
 }
 
 func TestOnlyShouldAllowGetRequestsDifferentData(t *testing.T) {
-	r := http.Request{
-		Method: "GET",
-	}
+	r := constructRequest("GET", Payload{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
 	nonExpectedBody := "{\"ErrorMessage\":\"Only GET requests are allowed\"}"
 
@@ -62,7 +60,7 @@ func TestOnlyShouldAllowGetRequestsDifferentData(t *testing.T) {
 		},
 	}
 
-	mockHandler.HandleGetRequest(w, &r)
+	mockHandler.HandleGetRequest(w, r)
 	response := w.Result()
 	body := w.Body.String()
 
@@ -75,15 +73,13 @@ func TestOnlyShouldAllowGetRequestsDifferentData(t *testing.T) {
 }
 
 func TestIfValidatorReturnsTrue(t *testing.T) {
-	r := http.Request{
-		Method: "GET",
-	}
+	r := constructRequest("GET", Payload{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
 	expectedBody := "{\"ValidCreditCardNumber\":true}\n"
 
 	mockHandler := NewHandler(&mockValidator{valid: true})
 
-	mockHandler.HandleGetRequest(w, &r)
+	mockHandler.HandleGetRequest(w, r)
 	response := w.Result()
 	body := w.Body.String()
 
@@ -96,9 +92,7 @@ func TestIfValidatorReturnsTrue(t *testing.T) {
 }
 
 func TestIfValidatorReturnsFalse(t *testing.T) {
-	r := http.Request{
-		Method: "GET",
-	}
+	r := constructRequest("GET", Payload{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
 	expectedBody := "{\"ValidCreditCardNumber\":false}\n"
 
@@ -108,7 +102,7 @@ func TestIfValidatorReturnsFalse(t *testing.T) {
 		},
 	}
 
-	mockHandler.HandleGetRequest(w, &r)
+	mockHandler.HandleGetRequest(w, r)
 	response := w.Result()
 	body := w.Body.String()
 
@@ -121,9 +115,7 @@ func TestIfValidatorReturnsFalse(t *testing.T) {
 }
 
 func TestParametersPassedToHandler(t *testing.T) {
-	r := http.Request{
-		Method: "GET",
-	}
+	r := constructRequest("GET", Payload{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
 	mockValidator := &mockValidator{}
 	mockHandler := NewHandler(mockValidator)
@@ -131,9 +123,17 @@ func TestParametersPassedToHandler(t *testing.T) {
 		sequence: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6},
 	}
 
-	mockHandler.HandleGetRequest(w, &r)
+	mockHandler.HandleGetRequest(w, r)
 
 	if !reflect.DeepEqual(mockValidator.calledWith.GetSequence(), expectedArgument.GetSequence()) {
 		t.Errorf("Expected digits object of  %v, got %v", expectedArgument, mockValidator.calledWith)
 	}
+}
+
+func constructRequest(method string, body Payload) *http.Request {
+
+	out, _ := json.Marshal(body)
+
+	req, _ := http.NewRequest(method, "http://example.com", bytes.NewBuffer(out))
+	return req
 }

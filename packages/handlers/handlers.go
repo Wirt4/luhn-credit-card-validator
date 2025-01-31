@@ -12,6 +12,10 @@ type Handler struct {
 	validator interfaces.Validator
 }
 
+type Payload struct {
+	CreditCardNumber string
+}
+
 func NewHandler(validator interfaces.Validator) *Handler {
 	return &Handler{validator: validator}
 }
