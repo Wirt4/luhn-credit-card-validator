@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 
 	"main.go/packages/interfaces"
@@ -31,7 +32,20 @@ func (h *Handler) HandleGetRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.credit_card_container.SetSequence("1234 5678 9012 3456")
+	var p Payload
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Error reading request body", http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.Unmarshal(body, &p); err != nil {
+		http.Error(w, "Error parsing request body", http.StatusBadRequest)
+		return
+	}
+
+	h.credit_card_container.SetSequence(p.CreditCardNumber)
 
 	response := response{ValidCreditCardNumber: h.validator.IsValid(h.credit_card_container)}
 	w.WriteHeader(http.StatusOK)

@@ -110,17 +110,14 @@ func TestIfValidatorReturnsFalse(t *testing.T) {
 }
 
 func TestParametersPassedToHandler(t *testing.T) {
-	r := http.Request{
-		Method: "GET",
-	}
+	expectedSequence := "4321 8756 2109 6543"
+	r := constructRequest("GET", Payload{CreditCardNumber: expectedSequence})
 	w := httptest.NewRecorder()
 	mockValidator := &mockValidator{}
 	mockHandler := NewHandler(mockValidator, &MockDigitSequence{})
-	expectedSequence := "1234 5678 9012 3456"
 
-	mockHandler.HandleGetRequest(w, &r)
+	mockHandler.HandleGetRequest(w, r)
 
-	// Verify the sequence passed to SetSequence
 	if mockValidator.calledWith.(*MockDigitSequence).sequence != expectedSequence {
 		t.Errorf("Expected sequence %v, got %v", expectedSequence, mockValidator.calledWith.(*MockDigitSequence).sequence)
 	}
