@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"main.go/packages/credit_card"
 	"main.go/packages/interfaces"
 )
 
@@ -11,12 +12,8 @@ type Handler struct {
 	validator interfaces.Validator
 }
 
-type response struct {
-	ValidCreditCardNumber bool
-}
-
-type error struct {
-	ErrorMessage string
+func NewHandler(validator interfaces.Validator) *Handler {
+	return &Handler{validator: validator}
 }
 
 func (h *Handler) HandleGetRequest(w http.ResponseWriter, r *http.Request) {
@@ -27,7 +24,18 @@ func (h *Handler) HandleGetRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	credit_card := credit_card.NewCreditCard()
+	credit_card.SetSequence("1234 5678 9012 3456")
+
+	response := response{ValidCreditCardNumber: h.validator.IsValid(&credit_card)}
 	w.WriteHeader(http.StatusOK)
-	response := response{ValidCreditCardNumber: h.validator.IsValid(nil)}
 	encoder.Encode(response)
+}
+
+type response struct {
+	ValidCreditCardNumber bool
+}
+
+type error struct {
+	ErrorMessage string
 }
