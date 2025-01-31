@@ -1,3 +1,3 @@
 package handlers
 
-//TODO
+func HandleGetRequest() {}

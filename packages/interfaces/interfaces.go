@@ -9,4 +9,6 @@ type DigitSequence interface {
 	GetSequence() []int
 }
 
-//TODO: implement Configuration Interface
+type Configuration interface {
+	GetConfiguration() map[string]string
+}
