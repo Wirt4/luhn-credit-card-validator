@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 
 	"main.go/packages/interfaces"
@@ -21,7 +22,7 @@ func TestOnlyShouldAllowGetRequests(t *testing.T) {
 		Method: "POST",
 	}
 	w := httptest.NewRecorder()
-	expectedBody := "Only GET requests are allowed\n"
+	expectedBody := "{\"ErrorMessage\":\"Only GET requests are allowed\"}\n"
 	mockHandler := Handler{
 		validator: &mockValidator{},
 	}
@@ -33,8 +34,8 @@ func TestOnlyShouldAllowGetRequests(t *testing.T) {
 	if response.StatusCode != http.StatusMethodNotAllowed {
 		t.Errorf("Expected status code %d, got %d", http.StatusMethodNotAllowed, response.StatusCode)
 	}
-	if body != expectedBody {
-		t.Errorf("Expected body %s, got %s", expectedBody, body)
+	if !reflect.DeepEqual(body, expectedBody) {
+		t.Errorf("Expected body %v, got %v", expectedBody, body)
 	}
 }
 
@@ -43,7 +44,7 @@ func TestOnlyShouldAllowGetRequestsDifferentData(t *testing.T) {
 		Method: "GET",
 	}
 	w := httptest.NewRecorder()
-	nonExpectedBody := "Only GET requests are allowed\n"
+	nonExpectedBody := "{\"ErrorMessage\":\"Only GET requests are allowed\"}"
 
 	mockHandler := Handler{
 		validator: &mockValidator{
