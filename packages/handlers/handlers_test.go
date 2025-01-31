@@ -10,6 +10,7 @@ import (
 
 	"main.go/packages/credit_card"
 	"main.go/packages/interfaces"
+	"main.go/packages/types"
 )
 
 type mockValidator struct {
@@ -23,7 +24,7 @@ func (m *mockValidator) IsValid(sequence interfaces.DigitSequence) bool {
 }
 
 func TestOnlyShouldAllowGetRequests(t *testing.T) {
-	r := constructRequest("POST", Payload{CreditCardNumber: "1234 5678 9012 3456"})
+	r := constructRequest("POST", types.CreditCardPayload{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
 	expectedBody := "Only GET requests are allowed\n"
 	mockHandler := NewHandler(&mockValidator{})
@@ -41,7 +42,7 @@ func TestOnlyShouldAllowGetRequests(t *testing.T) {
 }
 
 func TestOnlyShouldAllowGetRequestsDifferentData(t *testing.T) {
-	r := constructRequest("GET", Payload{CreditCardNumber: "1234 5678 9012 3456"})
+	r := constructRequest("GET", types.CreditCardPayload{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
 	nonExpectedBody := "{\"ErrorMessage\":\"Only GET requests are allowed\"}"
 	mockHandler := NewHandler(&mockValidator{valid: true})
@@ -59,7 +60,7 @@ func TestOnlyShouldAllowGetRequestsDifferentData(t *testing.T) {
 }
 
 func TestIfValidatorReturnsTrue(t *testing.T) {
-	r := constructRequest("GET", Payload{CreditCardNumber: "1234 5678 9012 3456"})
+	r := constructRequest("GET", types.CreditCardPayload{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
 	expectedBody := "{\"ValidCreditCardNumber\":true}\n"
 	mockHandler := NewHandler(&mockValidator{valid: true})
@@ -77,7 +78,7 @@ func TestIfValidatorReturnsTrue(t *testing.T) {
 }
 
 func TestIfValidatorReturnsFalse(t *testing.T) {
-	r := constructRequest("GET", Payload{CreditCardNumber: "1234 5678 9012 3456"})
+	r := constructRequest("GET", types.CreditCardPayload{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
 	expectedBody := "{\"ValidCreditCardNumber\":false}\n"
 	mockHandler := NewHandler(&mockValidator{valid: false})
@@ -98,7 +99,7 @@ func TestParametersPassedToHandler(t *testing.T) {
 	inputSequence := "4321 8756 2109 6543"
 	expected := credit_card.NewCreditCard()
 	expected.SetSequence(inputSequence)
-	r := constructRequest("GET", Payload{CreditCardNumber: inputSequence})
+	r := constructRequest("GET", types.CreditCardPayload{CreditCardNumber: inputSequence})
 	w := httptest.NewRecorder()
 	mockValidator := &mockValidator{}
 	mockHandler := NewHandler(mockValidator)
@@ -110,7 +111,7 @@ func TestParametersPassedToHandler(t *testing.T) {
 	}
 }
 func TestHandleGetRequestInvalidMethod(t *testing.T) {
-	r := constructRequest("POST", Payload{CreditCardNumber: "1234 5678 9012 3456"})
+	r := constructRequest("POST", types.CreditCardPayload{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
 	expectedBody := "Only GET requests are allowed\n"
 	mockHandler := NewHandler(&mockValidator{})
@@ -128,7 +129,7 @@ func TestHandleGetRequestInvalidMethod(t *testing.T) {
 }
 
 func TestHandleGetRequestValidCreditCard(t *testing.T) {
-	r := constructRequest("GET", Payload{CreditCardNumber: "1234 5678 9012 3456"})
+	r := constructRequest("GET", types.CreditCardPayload{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
 	expectedBody := "{\"ValidCreditCardNumber\":true}\n"
 	mockHandler := NewHandler(&mockValidator{valid: true})
@@ -146,7 +147,7 @@ func TestHandleGetRequestValidCreditCard(t *testing.T) {
 }
 
 func TestHandleGetRequestInvalidCreditCard(t *testing.T) {
-	r := constructRequest("GET", Payload{CreditCardNumber: "1234 5678 9012 3456"})
+	r := constructRequest("GET", types.CreditCardPayload{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
 	expectedBody := "{\"ValidCreditCardNumber\":false}\n"
 	mockHandler := NewHandler(&mockValidator{valid: false})
@@ -163,7 +164,7 @@ func TestHandleGetRequestInvalidCreditCard(t *testing.T) {
 	}
 }
 
-func constructRequest(method string, body Payload) *http.Request {
+func constructRequest(method string, body types.CreditCardPayload) *http.Request {
 
 	out, _ := json.Marshal(body)
 

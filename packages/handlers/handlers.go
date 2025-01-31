@@ -2,54 +2,49 @@ package handlers
 
 import (
 	"encoding/json"
-	"io"
 	"net/http"
 
 	"main.go/packages/credit_card"
+	"main.go/packages/error_handlers"
 	"main.go/packages/interfaces"
+	"main.go/packages/types"
 )
 
-type Handler struct {
+type GetHandler struct {
 	validator interfaces.Validator
-}
-
-type Payload struct {
-	CreditCardNumber string
-}
-
-func NewHandler(validator interfaces.Validator) *Handler {
-	return &Handler{
-		validator: validator,
-	}
-}
-
-func (h *Handler) HandleGetRequest(w http.ResponseWriter, r *http.Request) {
-	encoder := json.NewEncoder(w)
-	if r.Method != http.MethodGet {
-		http.Error(w, "Only GET requests are allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	var p Payload
-
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, "Error reading request body", http.StatusInternalServerError)
-		return
-	}
-
-	if err := json.Unmarshal(body, &p); err != nil {
-		http.Error(w, "Error parsing request body", http.StatusBadRequest)
-		return
-	}
-
-	card := credit_card.NewCreditCard()
-	card.SetSequence(p.CreditCardNumber)
-	response := response{ValidCreditCardNumber: h.validator.IsValid(&card)}
-	w.WriteHeader(http.StatusOK)
-	encoder.Encode(response)
 }
 
 type response struct {
 	ValidCreditCardNumber bool
+}
+
+func NewHandler(validator interfaces.Validator) *GetHandler {
+	return &GetHandler{
+		validator: validator,
+	}
+}
+
+func (h *GetHandler) HandleGetRequest(w http.ResponseWriter, r *http.Request) {
+	errorHandler := error_handlers.NewErrorHandler()
+	errorHandler.CheckMethod(r.Method)
+	errorHandler.CheckBody(r.Body)
+	if errorHandler.HasError {
+		message := errorHandler.Message
+		http.Error(w, message, http.StatusMethodNotAllowed)
+		return
+	}
+	is_valid := h.isValid(errorHandler.Parsed)
+	response := response{ValidCreditCardNumber: is_valid}
+	writeResponse(w, response)
+}
+
+func (h *GetHandler) isValid(payload types.CreditCardPayload) bool {
+	card := credit_card.NewCreditCard()
+	card.SetSequence(payload.CreditCardNumber)
+	return h.validator.IsValid(&card)
+}
+func writeResponse(w http.ResponseWriter, response response) {
+	w.WriteHeader(http.StatusOK)
+	encoder := json.NewEncoder(w)
+	encoder.Encode(response)
 }
