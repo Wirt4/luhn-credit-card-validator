@@ -24,7 +24,7 @@ func NewHandler(validator interfaces.Validator) *GetHandler {
 	}
 }
 
-func (h *GetHandler) HandleGetRequest(w http.ResponseWriter, r *http.Request) {
+func (h *GetHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 	errorHandler := error_handlers.NewErrorHandler()
 	errorHandler.CheckMethod(r.Method)
 	errorHandler.CheckBody(r.Body)

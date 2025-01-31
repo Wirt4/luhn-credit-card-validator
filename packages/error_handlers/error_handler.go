@@ -8,15 +8,15 @@ import (
 	"main.go/packages/types"
 )
 
-type ErrorHandler struct {
+type GetErrorHandler struct {
 	Message  string
 	Code     int
 	HasError bool
 	Parsed   types.CreditCardPayload
 }
 
-func NewErrorHandler() *ErrorHandler {
-	return &ErrorHandler{
+func NewErrorHandler() *GetErrorHandler {
+	return &GetErrorHandler{
 		Message:  "",
 		Code:     http.StatusOK,
 		HasError: false,
@@ -24,13 +24,13 @@ func NewErrorHandler() *ErrorHandler {
 	}
 }
 
-func (h *ErrorHandler) CheckMethod(method string) {
+func (h *GetErrorHandler) CheckMethod(method string) {
 	if method != http.MethodGet && !h.HasError {
 		h.setError("Only GET requests are allowed", http.StatusMethodNotAllowed)
 	}
 }
 
-func (h *ErrorHandler) CheckBody(body io.ReadCloser) {
+func (h *GetErrorHandler) CheckBody(body io.ReadCloser) {
 	if h.HasError {
 		return
 	}
@@ -46,7 +46,7 @@ func (h *ErrorHandler) CheckBody(body io.ReadCloser) {
 	}
 }
 
-func (h *ErrorHandler) setError(message string, code int) {
+func (h *GetErrorHandler) setError(message string, code int) {
 	h.Message = message
 	h.Code = code
 	h.HasError = true
