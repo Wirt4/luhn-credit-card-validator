@@ -5,30 +5,28 @@ import (
 	"io"
 	"net/http"
 
+	"main.go/packages/credit_card"
 	"main.go/packages/interfaces"
 )
 
 type Handler struct {
-	validator             interfaces.Validator
-	credit_card_container interfaces.DigitSequence
+	validator interfaces.Validator
 }
 
 type Payload struct {
 	CreditCardNumber string
 }
 
-func NewHandler(validator interfaces.Validator, container interfaces.DigitSequence) *Handler {
+func NewHandler(validator interfaces.Validator) *Handler {
 	return &Handler{
-		validator:             validator,
-		credit_card_container: container,
+		validator: validator,
 	}
 }
 
 func (h *Handler) HandleGetRequest(w http.ResponseWriter, r *http.Request) {
 	encoder := json.NewEncoder(w)
 	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		encoder.Encode(error{ErrorMessage: "Only GET requests are allowed"})
+		http.Error(w, "Only GET requests are allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -45,17 +43,13 @@ func (h *Handler) HandleGetRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.credit_card_container.SetSequence(p.CreditCardNumber)
-
-	response := response{ValidCreditCardNumber: h.validator.IsValid(h.credit_card_container)}
+	card := credit_card.NewCreditCard()
+	card.SetSequence(p.CreditCardNumber)
+	response := response{ValidCreditCardNumber: h.validator.IsValid(&card)}
 	w.WriteHeader(http.StatusOK)
 	encoder.Encode(response)
 }
 
 type response struct {
 	ValidCreditCardNumber bool
-}
-
-type error struct {
-	ErrorMessage string
 }
