@@ -1,8 +1,10 @@
 # luhn-credit-card-validator
 
-##Requirments
-- use the luhn algorithm
-- be implemented as an HTTP server
-- server should accept GET requests with JSON payload
-- The server should return 400 for invalid payloads
-- the response should indicate whether the credit card is valid or not
+##Running
+
+###The App
+`go run main.go` for a quick run
+`go build` to produce the executable
+
+###The Tests
+`go test ./...` from the root
