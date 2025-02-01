@@ -4,7 +4,9 @@ import (
 	"main.go/packages/interfaces"
 )
 
-func IsValid(sequence interfaces.DigitSequence) bool {
+type LuhnValidator struct{}
+
+func (v *LuhnValidator) IsValid(sequence interfaces.DigitSequence) bool {
 	if !sequence.HasCorrectLength() {
 		return false
 	}
@@ -18,28 +20,28 @@ func IsValid(sequence interfaces.DigitSequence) bool {
 	s = s[:lastIndex]
 	var sum = 0
 
-	for i, v := range s {
+	for i, j := range s {
 		if i%2 == 0 {
-			sum += v
+			sum += j
 		} else {
-			sum += sumDigit(v)
+			sum += v.sumDigit(j)
 		}
 	}
 
-	return modulateDigit(sum) == checkDigit
+	return v.modulateDigit(sum) == checkDigit
 }
 
-func sumDigit(digit int) int {
+func (v *LuhnValidator) sumDigit(digit int) int {
 	digit *= 2
 
 	if digit > 9 {
-		return addDigits(digit)
+		return v.addDigits(digit)
 	}
 
 	return digit
 }
 
-func addDigits(digit int) int {
+func (v *LuhnValidator) addDigits(digit int) int {
 	sum := 0
 
 	for digit > 0 {
@@ -50,6 +52,6 @@ func addDigits(digit int) int {
 	return sum
 }
 
-func modulateDigit(digit int) int {
+func (v *LuhnValidator) modulateDigit(digit int) int {
 	return (10 - digit%10) % 10
 }

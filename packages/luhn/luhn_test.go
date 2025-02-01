@@ -25,7 +25,8 @@ func TestIsValidSmallCase(t *testing.T) {
 		correctNumberLength: true,
 	}
 
-	actual := IsValid(mockNumbers)
+	validaor := &LuhnValidator{}
+	actual := validaor.IsValid(mockNumbers)
 
 	if actual != true {
 		t.Errorf("%v should be valid", mockNumbers.GetSequence())
@@ -38,7 +39,8 @@ func TestIsInvalid(t *testing.T) {
 		correctNumberLength: true,
 	}
 
-	actual := IsValid(mockNumbers)
+	validaor := &LuhnValidator{}
+	actual := validaor.IsValid(mockNumbers)
 
 	if actual != false {
 		t.Errorf("%v should not be valid", mockNumbers.GetSequence())
@@ -51,7 +53,8 @@ func TestIsValid(t *testing.T) {
 		correctNumberLength: true,
 	}
 
-	actual := IsValid(mockNumbers)
+	validaor := &LuhnValidator{}
+	actual := validaor.IsValid(mockNumbers)
 
 	if actual != true {
 		t.Errorf("%v should be valid", mockNumbers.GetSequence())
@@ -64,7 +67,8 @@ func TestEmptySequence(t *testing.T) {
 		correctNumberLength: true,
 	}
 
-	actual := IsValid(mockNumbers)
+	validaor := &LuhnValidator{}
+	actual := validaor.IsValid(mockNumbers)
 
 	if actual != false {
 		t.Errorf("%v should not be valid", mockNumbers.GetSequence())
@@ -77,7 +81,8 @@ func TestIsInvalidLength(t *testing.T) {
 		correctNumberLength: false,
 	}
 
-	actual := IsValid(mockNumbers)
+	validaor := &LuhnValidator{}
+	actual := validaor.IsValid(mockNumbers)
 
 	if actual != false {
 		t.Errorf("%v should not be valid", mockNumbers.GetSequence())
