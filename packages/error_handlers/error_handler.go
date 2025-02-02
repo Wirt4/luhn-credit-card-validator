@@ -12,7 +12,7 @@ type GetErrorHandler struct {
 	message  string
 	code     int
 	hasError bool
-	parsed   types.CreditCardPayload
+	parsed   types.RequestPayload
 }
 
 func NewErrorHandler() *GetErrorHandler {
@@ -20,7 +20,7 @@ func NewErrorHandler() *GetErrorHandler {
 		message:  "",
 		code:     http.StatusOK,
 		hasError: false,
-		parsed:   types.CreditCardPayload{},
+		parsed:   types.RequestPayload{},
 	}
 }
 
@@ -58,7 +58,7 @@ func (h *GetErrorHandler) GetCode() int {
 	return h.code
 }
 
-func (h *GetErrorHandler) GetParsed() types.CreditCardPayload {
+func (h *GetErrorHandler) GetParsed() types.RequestPayload {
 	return h.parsed
 }
 

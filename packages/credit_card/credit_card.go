@@ -6,10 +6,15 @@ type CreditCard struct {
 	container *digit_container.DigitContainer
 }
 
+func NewCreditCard(sequence string) *CreditCard {
+	return &CreditCard{
+		container: digit_container.NewDigitContainer(sequence),
+	}
+}
+
 func (c *CreditCard) SetSequence(sequence string) {
 	c.container = digit_container.NewDigitContainer(sequence)
 }
-
 func (c CreditCard) GetSequence() []int {
 	return c.container.GetSequence()
 }

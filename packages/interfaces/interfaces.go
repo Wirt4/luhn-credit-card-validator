@@ -7,6 +7,7 @@ import (
 
 type Validator interface {
 	IsValid(sequence DigitSequence) bool
+	Type() string
 }
 
 type DigitSequence interface {

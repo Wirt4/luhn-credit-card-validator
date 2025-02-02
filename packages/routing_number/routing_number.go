@@ -6,10 +6,17 @@ type RoutingNumber struct {
 	container *digit_container.DigitContainer
 }
 
-func (r *RoutingNumber) SetSequence(sequence string) {
-	r.container = digit_container.NewDigitContainer(sequence)
+func NewRoutingNumber(sequence string) *RoutingNumber {
+	return &RoutingNumber{
+		container: digit_container.NewDigitContainer(sequence),
+	}
 }
-func (c RoutingNumber) GetSequence() []int {
+
+func (c *RoutingNumber) SetSequence(sequence string) {
+	c.container = digit_container.NewDigitContainer(sequence)
+}
+
+func (c *RoutingNumber) GetSequence() []int {
 	return c.container.GetSequence()
 }
 

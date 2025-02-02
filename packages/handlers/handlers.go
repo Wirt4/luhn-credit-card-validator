@@ -37,10 +37,11 @@ func (h *GetHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 	writeResponse(w, response)
 }
 
-func (h *GetHandler) isValid(payload types.CreditCardPayload) bool {
-	card := factories.CreditCardFactory()
-	card.SetSequence(payload.CreditCardNumber)
-	return h.validator.IsValid(card)
+func (h *GetHandler) isValid(payload types.RequestPayload) bool {
+	t := h.validator.Type()
+	container := factories.ContainerFactory(t)
+	container.SetSequence(payload.Number)
+	return h.validator.IsValid(container)
 }
 func writeResponse(w http.ResponseWriter, response response) {
 	w.WriteHeader(http.StatusOK)

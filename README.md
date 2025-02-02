@@ -12,12 +12,12 @@ Note that the command line will run the server until you manually kill it.
 `go test ./...` from the root
 
 ##Using
-
-The endpoint is `http://localhost:8080/validate_credit_card/`.
+The app runs on `http://localhost:8080`
+The GET endpoints are  `/validate/credit_card/`, and ``
 The payload schema is 
 ```json
 {
-    "CreditCardNumber": "<your number sequence here>"
+    "Number": "<your number sequence here>"
 }
 ```
 The endpoint returns

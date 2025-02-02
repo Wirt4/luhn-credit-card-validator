@@ -54,16 +54,16 @@ func TestCheckBody(t *testing.T) {
 		expectedError   bool
 		expectedMessage string
 		expectedCode    int
-		expectedParsed  types.CreditCardPayload
+		expectedParsed  types.RequestPayload
 	}{
 		{
 			name:            "HasError already true",
-			body:            io.NopCloser(bytes.NewReader([]byte(`{"CreditCardNumber": "1234 5678 9012 3456"}`))),
+			body:            io.NopCloser(bytes.NewReader([]byte(`{"Number": "1234 5678 9012 3456"}`))),
 			initialHasError: true,
 			expectedError:   true,
 			expectedMessage: "",
 			expectedCode:    http.StatusOK,
-			expectedParsed:  types.CreditCardPayload{},
+			expectedParsed:  types.RequestPayload{},
 		},
 		{
 			name:            "Error reading body",
@@ -72,7 +72,7 @@ func TestCheckBody(t *testing.T) {
 			expectedError:   true,
 			expectedMessage: "Error reading request body",
 			expectedCode:    http.StatusInternalServerError,
-			expectedParsed:  types.CreditCardPayload{},
+			expectedParsed:  types.RequestPayload{},
 		},
 		{
 			name:            "Error parsing body",
@@ -81,16 +81,16 @@ func TestCheckBody(t *testing.T) {
 			expectedError:   true,
 			expectedMessage: "Error parsing request body",
 			expectedCode:    http.StatusBadRequest,
-			expectedParsed:  types.CreditCardPayload{},
+			expectedParsed:  types.RequestPayload{},
 		},
 		{
 			name:            "Successful parsing",
-			body:            io.NopCloser(bytes.NewReader([]byte(`{"CreditCardNumber": "1234 5678 9012 3456"}`))),
+			body:            io.NopCloser(bytes.NewReader([]byte(`{"Number": "1234 5678 9012 3456"}`))),
 			initialHasError: false,
 			expectedError:   false,
 			expectedMessage: "",
 			expectedCode:    http.StatusOK,
-			expectedParsed:  types.CreditCardPayload{CreditCardNumber: "1234 5678 9012 3456"},
+			expectedParsed:  types.RequestPayload{Number: "1234 5678 9012 3456"},
 		},
 	}
 

@@ -1,5 +1,5 @@
 package types
 
-type CreditCardPayload struct {
-	CreditCardNumber string
+type RequestPayload struct {
+	Number string
 }

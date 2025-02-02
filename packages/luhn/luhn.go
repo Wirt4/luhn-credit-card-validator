@@ -6,6 +6,10 @@ import (
 
 type LuhnValidator struct{}
 
+func (v *LuhnValidator) Type() string {
+	return "luhn"
+}
+
 func (v *LuhnValidator) IsValid(sequence interfaces.DigitSequence) bool {
 	if !sequence.HasCorrectLength() {
 		return false
