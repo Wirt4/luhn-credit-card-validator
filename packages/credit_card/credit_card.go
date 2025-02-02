@@ -1,21 +1,19 @@
 package credit_card
 
+import "main.go/packages/digit_container"
+
 type CreditCard struct {
-	sequence []int
+	container *digit_container.DigitContainer
 }
 
 func (c *CreditCard) SetSequence(sequence string) {
-	for _, v := range sequence {
-		if v >= '0' && v <= '9' {
-			c.sequence = append(c.sequence, int(v-'0'))
-		}
-	}
+	c.container = digit_container.NewDigitContainer(sequence)
 }
 
 func (c CreditCard) GetSequence() []int {
-	return c.sequence
+	return c.container.GetSequence()
 }
 
 func (c *CreditCard) HasCorrectLength() bool {
-	return len(c.sequence) == 16
+	return c.container.IsSize(16)
 }
