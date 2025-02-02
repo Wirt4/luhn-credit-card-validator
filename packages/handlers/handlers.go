@@ -14,7 +14,8 @@ type GetHandler struct {
 }
 
 type response struct {
-	ValidCreditCardNumber bool
+	Checksum string
+	IsValid  bool
 }
 
 func NewHandler(validator interfaces.Validator) *GetHandler {
@@ -33,7 +34,7 @@ func (h *GetHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	is_valid := h.isValid(errorHandler.GetParsed())
-	response := response{ValidCreditCardNumber: is_valid}
+	response := response{IsValid: is_valid, Checksum: h.validator.Type()}
 	writeResponse(w, response)
 }
 
