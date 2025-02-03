@@ -7,7 +7,7 @@ import (
 	"main.go/packages/types"
 )
 
-func ErrorHandlerFactory() interfaces.ErrorHandler[types.CreditCardPayload] {
+func ErrorHandlerFactory() interfaces.ErrorHandler[types.CreditCardRequest] {
 	return error_handlers.NewErrorHandler()
 }
 

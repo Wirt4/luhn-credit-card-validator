@@ -37,7 +37,7 @@ func (h *GetHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 	writeResponse(w, response)
 }
 
-func (h *GetHandler) isValid(payload types.CreditCardPayload) bool {
+func (h *GetHandler) isValid(payload types.CreditCardRequest) bool {
 	card := factories.CreditCardFactory()
 	card.SetSequence(payload.CreditCardNumber)
 	return h.validator.IsValid(card)
