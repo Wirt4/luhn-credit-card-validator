@@ -5,5 +5,6 @@ type CreditCardRequest struct {
 }
 
 type CreditCardResponse struct {
-	ValidCreditCardNumber bool
+	Issuer string
+	Valid  bool
 }

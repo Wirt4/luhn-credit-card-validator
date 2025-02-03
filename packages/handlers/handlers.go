@@ -29,7 +29,7 @@ func (h *GetHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	is_valid := h.isValid(errorHandler.GetParsed())
-	response := types.CreditCardResponse{ValidCreditCardNumber: is_valid}
+	response := types.CreditCardResponse{Valid: is_valid}
 	writeResponse(w, response)
 }
 

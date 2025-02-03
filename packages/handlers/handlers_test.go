@@ -62,7 +62,7 @@ func TestOnlyShouldAllowGetRequestsDifferentData(t *testing.T) {
 func TestIfValidatorReturnsTrue(t *testing.T) {
 	r := constructRequest("GET", types.CreditCardRequest{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
-	expectedBody := "{\"ValidCreditCardNumber\":true}\n"
+	expectedBody := "{\"Issuer\":\"\",\"Valid\":true}\n"
 	mockHandler := NewHandler(&mockValidator{valid: true})
 
 	mockHandler.HandleRequest(w, r)
@@ -80,7 +80,7 @@ func TestIfValidatorReturnsTrue(t *testing.T) {
 func TestIfValidatorReturnsFalse(t *testing.T) {
 	r := constructRequest("GET", types.CreditCardRequest{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
-	expectedBody := "{\"ValidCreditCardNumber\":false}\n"
+	expectedBody := "{\"Issuer\":\"\",\"Valid\":false}\n"
 	mockHandler := NewHandler(&mockValidator{valid: false})
 
 	mockHandler.HandleRequest(w, r)
@@ -131,7 +131,7 @@ func TestHandleGetRequestInvalidMethod(t *testing.T) {
 func TestHandleGetRequestValidCreditCard(t *testing.T) {
 	r := constructRequest("GET", types.CreditCardRequest{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
-	expectedBody := "{\"ValidCreditCardNumber\":true}\n"
+	expectedBody := "{\"Issuer\":\"\",\"Valid\":true}\n"
 	mockHandler := NewHandler(&mockValidator{valid: true})
 
 	mockHandler.HandleRequest(w, r)
@@ -149,7 +149,7 @@ func TestHandleGetRequestValidCreditCard(t *testing.T) {
 func TestHandleGetRequestInvalidCreditCard(t *testing.T) {
 	r := constructRequest("GET", types.CreditCardRequest{CreditCardNumber: "1234 5678 9012 3456"})
 	w := httptest.NewRecorder()
-	expectedBody := "{\"ValidCreditCardNumber\":false}\n"
+	expectedBody := "{\"Issuer\":\"\",\"Valid\":false}\n"
 	mockHandler := NewHandler(&mockValidator{valid: false})
 
 	mockHandler.HandleRequest(w, r)
