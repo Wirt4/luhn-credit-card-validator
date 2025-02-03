@@ -12,5 +12,5 @@ func ErrorHandlerFactory() interfaces.ErrorHandler[types.CreditCardRequest] {
 }
 
 func CreditCardFactory() interfaces.DigitSequence {
-	return &credit_card.CreditCard{}
+	return credit_card.NewCreditCard()
 }

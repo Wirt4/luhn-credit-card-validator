@@ -3,6 +3,8 @@ package credit_card
 import (
 	"reflect"
 	"testing"
+
+	"main.go/packages/card_issuer"
 )
 
 func TestUndelimitedStringInput(t *testing.T) {
@@ -41,15 +43,35 @@ func TestDelimitedStringInput(t *testing.T) {
 }
 
 func TestHasCorrectLength(t *testing.T) {
-	card := &CreditCard{}
+	card := &CreditCard{
+		issuer: &card_issuer.CardIssuer{
+			SequenceLength: 16,
+		},
+	}
 	card.SetSequence("1234 5678 9111 1111 90")
 	if card.HasCorrectLength() {
 		t.Errorf("Expected false, got true")
 	}
 }
 
+func TestHasCorrectLengthAMX(t *testing.T) {
+	card := &CreditCard{
+		issuer: &card_issuer.CardIssuer{
+			SequenceLength: 15,
+		},
+	}
+	card.SetSequence("1234 5678 9111 1111")
+	if card.HasCorrectLength() {
+		t.Errorf("Expected false, got true")
+	}
+}
+
 func TestHasCorrectLengthWithZero(t *testing.T) {
-	card := &CreditCard{}
+	card := &CreditCard{
+		issuer: &card_issuer.CardIssuer{
+			SequenceLength: 16,
+		},
+	}
 	card.SetSequence("1234 5678 9111 1101")
 	if !card.HasCorrectLength() {
 		t.Errorf("Expected true, got false")
