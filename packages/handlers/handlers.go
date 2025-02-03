@@ -13,10 +13,6 @@ type GetHandler struct {
 	validator interfaces.Validator
 }
 
-type response struct {
-	ValidCreditCardNumber bool
-}
-
 func NewHandler(validator interfaces.Validator) *GetHandler {
 	return &GetHandler{
 		validator: validator,
@@ -33,7 +29,7 @@ func (h *GetHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	is_valid := h.isValid(errorHandler.GetParsed())
-	response := response{ValidCreditCardNumber: is_valid}
+	response := types.CreditCardResponse{ValidCreditCardNumber: is_valid}
 	writeResponse(w, response)
 }
 
@@ -42,7 +38,7 @@ func (h *GetHandler) isValid(payload types.CreditCardRequest) bool {
 	card.SetSequence(payload.CreditCardNumber)
 	return h.validator.IsValid(card)
 }
-func writeResponse(w http.ResponseWriter, response response) {
+func writeResponse(w http.ResponseWriter, response types.CreditCardResponse) {
 	w.WriteHeader(http.StatusOK)
 	encoder := json.NewEncoder(w)
 	encoder.Encode(response)
