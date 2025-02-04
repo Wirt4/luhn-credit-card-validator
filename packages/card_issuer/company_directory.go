@@ -76,38 +76,31 @@ func (t *tree) insertRange(issuerName string, iin int, lowestSequenceLength int,
 }
 
 func ParseEntry(entry string) types.ProviderData {
-	fmt.Println(entry)
 	params := strings.SplitAfter(entry, " ")
-	fmt.Println(params)
 	name_builder := strings.Builder{}
 	done := false
 	var i int = 0
 	for !done {
 		fmt.Println(params[i])
 		if string(params[i][0]) == "[" {
-			fmt.Println("found bracket")
 			done = true
 			break
 		}
 
 		if isDigit(params[i][0]) {
-			fmt.Printf("found number with '%v'", string(params[i][0]))
 			done = true
 			break
 		}
 		name_builder.WriteString(params[i])
 		i++
 	}
-	name := strings.Trim(name_builder.String(), " ")
-	fmt.Printf("testing for ending newline: %v%v\n", name, name)
-	var iins []int
-	if name == "VISA" {
-		iins = []int{4}
-	} else {
-		iins = []int{55}
-	}
+	fmt.Printf("Current index is %v", params[i])
+	iin, _ := strconv.Atoi(strings.Trim(params[i], " "))
+	fmt.Printf("IIN is %v", iin)
+	iins := []int{iin}
+
 	return types.ProviderData{
-		Name:              name,
+		Name:              strings.Trim(name_builder.String(), " "),
 		IINs:              iins,
 		MaxSequenceLength: 16,
 		MinSequenceLength: 16,
