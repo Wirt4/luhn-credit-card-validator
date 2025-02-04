@@ -1,6 +1,7 @@
 package card_issuer
 
 import (
+	"reflect"
 	"testing"
 
 	"main.go/packages/types"
@@ -44,5 +45,31 @@ func TestAMX(t *testing.T) {
 	}
 	if amx[0].Min != 15 && amx[0].Max != 15 {
 		t.Errorf("Expected 15, got %v", amx[0].Min)
+	}
+}
+
+func TestParseEntryVisa(t *testing.T) {
+	expected := types.ProviderData{
+		Name:              "VISA",
+		IINs:              []int{4},
+		MaxSequenceLength: 16,
+		MinSequenceLength: 16,
+	}
+	actual := ParseEntry("VISA 4 16")
+	if !reflect.DeepEqual(expected, actual) {
+		t.Errorf("Expected %v, got %v", expected, actual)
+	}
+}
+
+func TestParseEntryDinersClub(t *testing.T) {
+	expected := types.ProviderData{
+		Name:              "Mastercard: Diners Club U.S. and Canada",
+		IINs:              []int{55},
+		MaxSequenceLength: 16,
+		MinSequenceLength: 16,
+	}
+	actual := ParseEntry("Mastercard: Diners Club U.S. and Canada 55 16")
+	if !reflect.DeepEqual(expected, actual) {
+		t.Errorf("Expected %v, got %v", expected, actual)
 	}
 }

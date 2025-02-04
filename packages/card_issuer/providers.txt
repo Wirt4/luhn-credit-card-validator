@@ -1,0 +1,13 @@
+VISA 4 16
+American Express [34, 35] 15
+Chinta T-Union 31 19
+RuPay [60, 65, 81, 82, 508, 353, 356] 16
+BORICA-BANKCARD 25 16
+Mastercard [51-54, 56-59, 2221-2720] 16
+Diners Club (US and Canada) 55 16
+Troy [65, 9792] 16
+UATP 1 15
+LankaPay 357111 16
+Visa Electron [4026, 417500, 4508, 4844, 4913, 4917] 16
+Dankort [5019, 4571] 16
+China Union Pay 62 [16-19]

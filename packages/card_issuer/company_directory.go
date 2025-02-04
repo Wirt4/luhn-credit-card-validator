@@ -1,7 +1,9 @@
 package card_issuer
 
 import (
+	"fmt"
 	"strconv"
+	"strings"
 	"sync"
 
 	"main.go/packages/types"
@@ -71,4 +73,48 @@ func (t *tree) insertRange(issuerName string, iin int, lowestSequenceLength int,
 			Issuer: issuerName,
 		},
 		t.Root)
+}
+
+func ParseEntry(entry string) types.ProviderData {
+	fmt.Println(entry)
+	params := strings.SplitAfter(entry, " ")
+	fmt.Println(params)
+	name_builder := strings.Builder{}
+	done := false
+	var i int = 0
+	for !done {
+		fmt.Println(params[i])
+		if string(params[i][0]) == "[" {
+			fmt.Println("found bracket")
+			done = true
+			break
+		}
+
+		if isDigit(params[i][0]) {
+			fmt.Printf("found number with '%v'", string(params[i][0]))
+			done = true
+			break
+		}
+		name_builder.WriteString(params[i])
+		i++
+	}
+	name := strings.Trim(name_builder.String(), " ")
+	fmt.Printf("testing for ending newline: %v%v\n", name, name)
+	var iins []int
+	if name == "VISA" {
+		iins = []int{4}
+	} else {
+		iins = []int{55}
+	}
+	return types.ProviderData{
+		Name:              name,
+		IINs:              iins,
+		MaxSequenceLength: 16,
+		MinSequenceLength: 16,
+	}
+
+}
+
+func isDigit(c byte) bool {
+	return c >= '0' && c <= '9'
 }

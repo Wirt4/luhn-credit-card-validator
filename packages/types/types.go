@@ -15,6 +15,13 @@ type CardIssuer struct {
 	Issuer string
 }
 
+type ProviderData struct {
+	Name              string
+	IINs              []int
+	MaxSequenceLength int
+	MinSequenceLength int
+}
+
 type Node struct {
 	Children map[int]*Node
 	Data     *CardIssuer
