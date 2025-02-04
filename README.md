@@ -24,3 +24,5 @@ The endpoint returns
 ```json
 {"ValidCreditCardNumber":"<boolean value>"}
 ```
+
+Note: To manage initial scope, are focusing on the U.S .right now
