@@ -1,9 +1,13 @@
 package card_issuer
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestVisa(t *testing.T) {
 	visa := NewCardIssuer([]int{4})
+	fmt.Print(visa)
 	if visa[0].Issuer != "VISA" {
 		t.Errorf("Expected VISA, got %v", visa[0].Issuer)
 	}

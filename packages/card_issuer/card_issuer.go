@@ -54,9 +54,28 @@ func findIssuer(sequence []int, n *Node, visited *[]CardIssuer) {
 
 func NewCardIssuer(sequence []int) []CardIssuer {
 	n := buildTree()
-	visited := []CardIssuer{}
-	findIssuer(sequence, n, &visited)
-	return visited
+	//visited := []CardIssuer{}
+	v := visitor{sequence: sequence, ndx: 0, cur: n, visited: []CardIssuer{}}
+	//findIssuer(sequence, n, &visited)
+	v.traverse()
+	return v.visited
+}
+
+type visitor struct {
+	sequence []int
+	ndx      int
+	cur      *Node
+	visited  []CardIssuer
+}
+
+func (v *visitor) traverse() {
+	for v.cur != nil && v.ndx < len(v.sequence) && v.cur.Children != nil {
+		v.cur = v.cur.Children[v.sequence[v.ndx]]
+		v.ndx++
+		if v.cur != nil && v.cur.Data != nil {
+			v.visited = append(v.visited, *v.cur.Data)
+		}
+	}
 }
 
 func buildTree() *Node {
