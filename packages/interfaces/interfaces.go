@@ -3,6 +3,8 @@ package interfaces
 import (
 	"io"
 	"net/http"
+
+	"main.go/packages/types"
 )
 
 type Validator interface {
@@ -30,4 +32,9 @@ type ErrorHandler[T any] interface {
 	GetMessage() string
 	GetCode() int
 	GetParsed() T
+}
+
+type Visitor interface {
+	Traverse(sequence []int, tree *types.Node) //TOOO: set node as type or interface
+	GetVisited() []types.CardIssuer
 }

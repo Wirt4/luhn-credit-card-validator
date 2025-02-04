@@ -1,10 +1,14 @@
 package credit_card
 
-import "main.go/packages/card_issuer"
+import (
+	"main.go/packages/card_issuer"
+	"main.go/packages/issuer_visitor"
+	"main.go/packages/types"
+)
 
 type CreditCard struct {
 	sequence []int
-	issuers  []card_issuer.CardIssuer
+	issuers  []types.CardIssuer
 }
 
 func NewCreditCard() *CreditCard {
@@ -17,7 +21,7 @@ func (card *CreditCard) SetSequence(sequence string) {
 			card.sequence = append(card.sequence, int(v-'0'))
 		}
 	}
-	card.issuers = card_issuer.GetCardIssuers(card.sequence)
+	card.issuers = card_issuer.GetCardIssuers(card.sequence, &issuer_visitor.Visitor{})
 }
 
 func (card CreditCard) GetSequence() []int {
@@ -25,7 +29,7 @@ func (card CreditCard) GetSequence() []int {
 }
 
 func (card *CreditCard) HasCorrectLength() bool {
-	filtered_issuers := []card_issuer.CardIssuer{}
+	filtered_issuers := []types.CardIssuer{}
 	var isCorrect bool = false
 	for _, issuer := range card.issuers {
 		if issuer.Min <= len(card.sequence) && len(card.sequence) <= issuer.Max {

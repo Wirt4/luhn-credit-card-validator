@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"main.go/packages/card_issuer"
+	"main.go/packages/types"
 )
 
 func TestUndelimitedStringInput(t *testing.T) {
@@ -44,7 +44,7 @@ func TestDelimitedStringInput(t *testing.T) {
 
 func TestHasCorrectLength(t *testing.T) {
 	card := &CreditCard{
-		issuers: []card_issuer.CardIssuer{{
+		issuers: []types.CardIssuer{{
 			Min: 16,
 			Max: 16,
 		}},
@@ -57,7 +57,7 @@ func TestHasCorrectLength(t *testing.T) {
 
 func TestHasCorrectLengthAMX(t *testing.T) {
 	card := &CreditCard{
-		issuers: []card_issuer.CardIssuer{{
+		issuers: []types.CardIssuer{{
 			Min: 15,
 			Max: 15,
 		}},
