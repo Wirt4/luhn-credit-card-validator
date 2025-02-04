@@ -7,8 +7,8 @@ func TestVisa(t *testing.T) {
 	if visa.Issuer != "VISA" {
 		t.Errorf("Expected VISA, got %v", visa.Issuer)
 	}
-	if visa.SequenceLength != 16 {
-		t.Errorf("Expected 16, got %v", visa.SequenceLength)
+	if visa.Min != 16 && visa.Max != 16 {
+		t.Errorf("Expected 16, got %v", visa.Min)
 	}
 }
 
@@ -17,8 +17,8 @@ func TestAMX(t *testing.T) {
 	if amx.Issuer != "American Express" {
 		t.Errorf("Expected AMX, got %v", amx.Issuer)
 	}
-	if amx.SequenceLength != 15 {
-		t.Errorf("Expected 15, got %v", amx.SequenceLength)
+	if amx.Min != 15 && amx.Max != 15 {
+		t.Errorf("Expected 15, got %v", amx.Min)
 	}
 }
 
@@ -27,8 +27,8 @@ func TestDinersClub(t *testing.T) {
 	if dinersClub.Issuer != "Mastercard: Diners Club U.S. and Canada" {
 		t.Errorf("Expected Diners Club, got %v", dinersClub.Issuer)
 	}
-	if dinersClub.SequenceLength != 16 {
-		t.Errorf("Expected 16, got %v", dinersClub.SequenceLength)
+	if dinersClub.Min != 16 && dinersClub.Max != 16 {
+		t.Errorf("Expected 16, got %v", dinersClub.Min)
 	}
 }
 
@@ -37,7 +37,7 @@ func TestDancort(t *testing.T) {
 	if dancort.Issuer != "Dankort" {
 		t.Errorf("Expected Dancort, got %v", dancort.Issuer)
 	}
-	if dancort.SequenceLength != 16 {
-		t.Errorf("Expected 16, got %v", dancort.SequenceLength)
+	if dancort.Min != 16 && dancort.Max != 16 {
+		t.Errorf("Expected 16, got %v", dancort.Min)
 	}
 }

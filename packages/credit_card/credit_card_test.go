@@ -45,7 +45,8 @@ func TestDelimitedStringInput(t *testing.T) {
 func TestHasCorrectLength(t *testing.T) {
 	card := &CreditCard{
 		issuer: &card_issuer.CardIssuer{
-			SequenceLength: 16,
+			Min: 16,
+			Max: 16,
 		},
 	}
 	card.SetSequence("1234 5678 9111 1111 90")
@@ -57,7 +58,8 @@ func TestHasCorrectLength(t *testing.T) {
 func TestHasCorrectLengthAMX(t *testing.T) {
 	card := &CreditCard{
 		issuer: &card_issuer.CardIssuer{
-			SequenceLength: 15,
+			Min: 15,
+			Max: 15,
 		},
 	}
 	card.SetSequence("1234 5678 9111 1111")
@@ -69,7 +71,8 @@ func TestHasCorrectLengthAMX(t *testing.T) {
 func TestHasCorrectLengthWithZero(t *testing.T) {
 	card := &CreditCard{
 		issuer: &card_issuer.CardIssuer{
-			SequenceLength: 16,
+			Min: 16,
+			Max: 16,
 		},
 	}
 	card.SetSequence("1234 5678 9111 1101")

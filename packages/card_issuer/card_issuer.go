@@ -3,8 +3,9 @@ package card_issuer
 import "strconv"
 
 type CardIssuer struct {
-	SequenceLength int
-	Issuer         string
+	Min    int
+	Max    int
+	Issuer string
 }
 
 type Node struct {
@@ -54,7 +55,7 @@ func NewCardIssuer(sequence []int, isInUS bool) *CardIssuer {
 	n := buildTree(isInUS)
 	issuer := findIssuer(sequence, n)
 	if issuer == nil {
-		return &CardIssuer{SequenceLength: -1, Issuer: "not found"}
+		return &CardIssuer{Min: -1, Max: -1, Issuer: "not found"}
 	}
 	return issuer
 }
@@ -103,7 +104,7 @@ type tree struct {
 }
 
 func (t *tree) Insert(issuerName string, iin int, sequenceLength int) {
-	t.Root = insertNode(strconv.Itoa(iin), &CardIssuer{SequenceLength: sequenceLength, Issuer: issuerName}, t.Root)
+	t.Root = insertNode(strconv.Itoa(iin), &CardIssuer{Min: sequenceLength, Max: sequenceLength, Issuer: issuerName}, t.Root)
 }
 
 func newTree() *tree {

@@ -9,7 +9,8 @@ type CreditCard struct {
 
 func NewCreditCard() *CreditCard {
 	return &CreditCard{issuer: &card_issuer.CardIssuer{
-		SequenceLength: 16,
+		Min: 16,
+		Max: 16,
 	}}
 }
 
@@ -27,5 +28,5 @@ func (card CreditCard) GetSequence() []int {
 }
 
 func (card *CreditCard) HasCorrectLength() bool {
-	return len(card.sequence) == card.issuer.SequenceLength
+	return len(card.sequence) >= card.issuer.Min && len(card.sequence) <= card.issuer.Max
 }
