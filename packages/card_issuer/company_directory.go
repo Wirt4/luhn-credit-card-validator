@@ -75,8 +75,16 @@ func (t *tree) insertRange(issuerName string, iin int, lowestSequenceLength int,
 		t.Root)
 }
 
+func split(entry string) []string {
+	temp := strings.Split(entry, " ")
+	ans := []string{}
+	for _, v := range temp {
+		ans = append(ans, strings.Trim(v, " "))
+	}
+	return ans
+}
 func ParseEntry(entry string) types.ProviderData {
-	params := strings.SplitAfter(entry, " ")
+	params := split(entry)
 	name_builder := strings.Builder{}
 	done := false
 	var i int = 0
@@ -91,16 +99,18 @@ func ParseEntry(entry string) types.ProviderData {
 			done = true
 			break
 		}
+		if name_builder.Len() > 0 {
+			name_builder.WriteString(" ")
+		}
 		name_builder.WriteString(params[i])
 		i++
 	}
 	fmt.Printf("Current index is %v", params[i])
-	iin, _ := strconv.Atoi(strings.Trim(params[i], " "))
-	fmt.Printf("IIN is %v", iin)
+	iin, _ := strconv.Atoi(params[i])
 	iins := []int{iin}
 
 	return types.ProviderData{
-		Name:              strings.Trim(name_builder.String(), " "),
+		Name:              name_builder.String(),
 		IINs:              iins,
 		MaxSequenceLength: 16,
 		MinSequenceLength: 16,
