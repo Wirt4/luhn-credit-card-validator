@@ -34,33 +34,32 @@ func insertNode(iin string, issuer *CardIssuer, n *Node) *Node {
 	return n
 }
 
-func findIssuer(sequence []int, n *Node) *CardIssuer {
+func findIssuer(sequence []int, n *Node, visited *[]CardIssuer) {
 	if n == nil {
-		return nil
+		return
 	}
 
-	if len(n.Children) == 0 {
-		return n.Data
+	if n.Data != nil {
+		*visited = append(*visited, *n.Data)
 	}
 
-	if len(sequence) == 0 {
-		return nil
+	if len(n.Children) == 0 || len(sequence) == 0 {
+		return
 	}
+
 	ndx, sequence := sequence[0], sequence[1:]
 
-	return findIssuer(sequence, n.Children[ndx])
+	findIssuer(sequence, n.Children[ndx], visited)
 }
 
-func NewCardIssuer(sequence []int, isInUS bool) *CardIssuer {
-	n := buildTree(isInUS)
-	issuer := findIssuer(sequence, n)
-	if issuer == nil {
-		return &CardIssuer{Min: -1, Max: -1, Issuer: "not found"}
-	}
-	return issuer
+func NewCardIssuer(sequence []int) []CardIssuer {
+	n := buildTree()
+	visited := []CardIssuer{}
+	findIssuer(sequence, n, &visited)
+	return visited
 }
 
-func buildTree(isInUS bool) *Node {
+func buildTree() *Node {
 	//Another way to build the tree is to read from a file, which would make it more configurable
 	tree := newTree()
 	tree.Insert("VISA", 4, 16)
@@ -77,7 +76,7 @@ func buildTree(isInUS bool) *Node {
 	}
 	for i := 51; i <= 59; i++ {
 		var provider = "Mastercard"
-		if i == 55 && isInUS {
+		if i == 55 {
 			provider += ": Diners Club U.S. and Canada"
 		}
 		tree.Insert(provider, i, 16)
@@ -87,14 +86,14 @@ func buildTree(isInUS bool) *Node {
 	}
 	tree.Insert("UATP", 1, 15)
 	tree.Insert("LankaPay", 357111, 16)
-	if !isInUS {
-		for _, iin := range []int{4026, 417500, 4508, 4844, 4913, 4917} {
-			tree.Insert("Visa Electron", iin, 16)
-		}
-		for _, iin := range []int{5019, 4571} {
-			tree.Insert("Dankort", iin, 16)
-		}
+
+	for _, iin := range []int{4026, 417500, 4508, 4844, 4913, 4917} {
+		tree.Insert("Visa Electron", iin, 16)
 	}
+	for _, iin := range []int{5019, 4571} {
+		tree.Insert("Dankort", iin, 16)
+	}
+
 	tree.Insert("VISA", 4, 16)
 	return tree.Root
 }
