@@ -1,6 +1,8 @@
 package card_issuer
 
-import "strconv"
+import (
+	"strconv"
+)
 
 type CardIssuer struct {
 	Min    int
@@ -34,29 +36,9 @@ func insertNode(iin string, issuer *CardIssuer, n *Node) *Node {
 	return n
 }
 
-func findIssuer(sequence []int, n *Node, visited *[]CardIssuer) {
-	if n == nil {
-		return
-	}
-
-	if n.Data != nil {
-		*visited = append(*visited, *n.Data)
-	}
-
-	if len(n.Children) == 0 || len(sequence) == 0 {
-		return
-	}
-
-	ndx, sequence := sequence[0], sequence[1:]
-
-	findIssuer(sequence, n.Children[ndx], visited)
-}
-
-func NewCardIssuer(sequence []int) []CardIssuer {
+func GetCardIssuers(sequence []int) []CardIssuer {
 	n := buildTree()
-	//visited := []CardIssuer{}
 	v := visitor{sequence: sequence, ndx: 0, cur: n, visited: []CardIssuer{}}
-	//findIssuer(sequence, n, &visited)
 	v.traverse()
 	return v.visited
 }
@@ -79,7 +61,6 @@ func (v *visitor) traverse() {
 }
 
 func buildTree() *Node {
-	//Another way to build the tree is to read from a file, which would make it more configurable
 	tree := newTree()
 	tree.Insert("VISA", 4, 16)
 	for _, iin := range []int{34, 37} {
