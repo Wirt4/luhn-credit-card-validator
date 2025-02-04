@@ -4,14 +4,11 @@ import "main.go/packages/card_issuer"
 
 type CreditCard struct {
 	sequence []int
-	issuers  []*card_issuer.CardIssuer
+	issuers  []card_issuer.CardIssuer
 }
 
 func NewCreditCard() *CreditCard {
-	return &CreditCard{issuers: []*card_issuer.CardIssuer{{
-		Min: 16,
-		Max: 16,
-	}}}
+	return &CreditCard{}
 }
 
 func (card *CreditCard) SetSequence(sequence string) {
@@ -20,7 +17,7 @@ func (card *CreditCard) SetSequence(sequence string) {
 			card.sequence = append(card.sequence, int(v-'0'))
 		}
 	}
-	//create the provider
+	card.issuers = card_issuer.NewCardIssuer(card.sequence)
 }
 
 func (card CreditCard) GetSequence() []int {
@@ -28,5 +25,14 @@ func (card CreditCard) GetSequence() []int {
 }
 
 func (card *CreditCard) HasCorrectLength() bool {
-	return len(card.sequence) >= card.issuers[0].Min && len(card.sequence) <= card.issuers[0].Max
+	filtered_issuers := []card_issuer.CardIssuer{}
+	var isCorrect bool = false
+	for _, issuer := range card.issuers {
+		if issuer.Min <= len(card.sequence) && len(card.sequence) <= issuer.Max {
+			filtered_issuers = append(filtered_issuers, issuer)
+			isCorrect = true
+		}
+	}
+	card.issuers = filtered_issuers
+	return isCorrect
 }

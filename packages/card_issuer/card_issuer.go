@@ -95,6 +95,8 @@ func buildTree() *Node {
 	}
 
 	tree.Insert("VISA", 4, 16)
+
+	tree.InsertRange("China Union Pay", 62, 16, 19)
 	return tree.Root
 }
 
@@ -103,7 +105,18 @@ type tree struct {
 }
 
 func (t *tree) Insert(issuerName string, iin int, sequenceLength int) {
-	t.Root = insertNode(strconv.Itoa(iin), &CardIssuer{Min: sequenceLength, Max: sequenceLength, Issuer: issuerName}, t.Root)
+	t.InsertRange(issuerName, iin, sequenceLength, sequenceLength)
+}
+
+func (t *tree) InsertRange(issuerName string, iin int, start int, end int) {
+	t.Root = insertNode(
+		strconv.Itoa(iin),
+		&CardIssuer{
+			Min:    start,
+			Max:    end,
+			Issuer: issuerName,
+		},
+		t.Root)
 }
 
 func newTree() *tree {
