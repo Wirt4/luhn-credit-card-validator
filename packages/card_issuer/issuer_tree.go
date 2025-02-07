@@ -1,6 +1,10 @@
 package card_issuer
 
-import "main.go/packages/types"
+import (
+	"strconv"
+
+	"main.go/packages/types"
+)
 
 type tree struct {
 	Root *types.Node
@@ -29,4 +33,19 @@ func insertNode(iin string, issuer *types.CardIssuer, n *types.Node) *types.Node
 		n.Children[msd] = insertNode(iin, issuer, n.Children[msd])
 	}
 	return n
+}
+
+func (t *tree) insert(issuerName string, iin int, sequenceLength int) {
+	t.insertRange(issuerName, iin, sequenceLength, sequenceLength)
+}
+
+func (t *tree) insertRange(issuerName string, iin int, lowestSequenceLength int, highestSequenceLength int) {
+	t.Root = insertNode(
+		strconv.Itoa(iin),
+		&types.CardIssuer{
+			Min:    lowestSequenceLength,
+			Max:    highestSequenceLength,
+			Issuer: issuerName,
+		},
+		t.Root)
 }

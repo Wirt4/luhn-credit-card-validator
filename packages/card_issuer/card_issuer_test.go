@@ -86,3 +86,25 @@ func TestParsedEntryMultipleIINs(t *testing.T) {
 		t.Errorf("Expected %v, got %v", expected, actual)
 	}
 }
+
+func TestParseAMX(t *testing.T) {
+	expected := types.ProviderData{
+		Name:              "American Express",
+		IINs:              []int{34, 35},
+		MaxSequenceLength: 15,
+		MinSequenceLength: 15,
+	}
+	actual := ParseEntry("American Express [34, 35] 15")
+	if !reflect.DeepEqual(expected.Name, actual.Name) {
+		t.Errorf("Expected %v, got %v", expected.Name, actual.Name)
+	}
+}
+
+func TestSplit(t *testing.T) {
+	expected := []string{"American Express", "[34, 35]", "15"}
+	actual := split("American Express [34, 35] 15")
+	if !reflect.DeepEqual(expected, actual) {
+		t.Errorf("Expected %v, got %v", expected, actual)
+	}
+
+}

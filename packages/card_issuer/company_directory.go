@@ -1,10 +1,12 @@
 package card_issuer
 
 import (
-	"container/list"
-	"strconv"
+	"bufio"
+	"fmt"
+	"os"
 	"strings"
 	"sync"
+	"unicode"
 
 	"main.go/packages/types"
 )
@@ -24,6 +26,29 @@ var lock = &sync.Mutex{}
 var singleInstance *types.Node
 
 func buildTree() *types.Node {
+	pwd, _ := os.Getwd()
+	file, err := os.Open(pwd + "/providers.txt")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer file.Close()
+	tree := newTree()
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		entry := ParseEntry(scanner.Text())
+		for _, iin := range entry.IINs {
+			fmt.Printf("name %v\nIINs %v\nmin length %v\nmax length %v\n\n", entry.Name, entry.IINs, entry.MinSequenceLength, entry.MaxSequenceLength)
+			tree.insertRange(entry.Name, iin, entry.MinSequenceLength, entry.MaxSequenceLength)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		fmt.Println(err)
+	}
+	return tree.Root
+}
+
+func temp() *types.Node {
 	tree := newTree()
 	tree.insert("VISA", 4, 16)
 	for _, iin := range []int{34, 37} {
@@ -60,32 +85,22 @@ func buildTree() *types.Node {
 	return tree.Root
 }
 
-func (t *tree) insert(issuerName string, iin int, sequenceLength int) {
-	t.insertRange(issuerName, iin, sequenceLength, sequenceLength)
-}
-
-func (t *tree) insertRange(issuerName string, iin int, lowestSequenceLength int, highestSequenceLength int) {
-	t.Root = insertNode(
-		strconv.Itoa(iin),
-		&types.CardIssuer{
-			Min:    lowestSequenceLength,
-			Max:    highestSequenceLength,
-			Issuer: issuerName,
-		},
-		t.Root)
-}
-
 func split(entry string) []string {
-	temp := strings.Split(entry, " ")
-	ans := []string{}
-	for _, v := range temp {
-		ans = append(ans, strings.Trim(v, " "))
+	var i = 1
+	var j = 0
+	splitIndeces := [2]int{}
+	for i < len(entry)-1 {
+		if entry[i] == ' ' && entry[i-1] != ',' && ((entry[i-1] == ']' || unicode.IsDigit(rune(entry[i-1]))) || (entry[i+1] == '[' || unicode.IsDigit(rune(entry[i+1])))) {
+			splitIndeces[j] = i
+			j++
+		}
+		i++
 	}
-	return ans
+	return []string{entry[:splitIndeces[0]], entry[splitIndeces[0]+1 : splitIndeces[1]], entry[splitIndeces[1]+1:]}
 }
 
 func ParseEntry(entry string) types.ProviderData {
-	params := split(entry)
+	params := split(entry) //splits on all spaces
 	provider_name := strings.Builder{}
 	iins := &numberHandler{}
 	sequence_range := &numberHandler{}
@@ -106,90 +121,4 @@ func ParseEntry(entry string) types.ProviderData {
 		MaxSequenceLength: sequence_range.GetHigh(),
 		MinSequenceLength: sequence_range.GetLow(),
 	}
-
-}
-
-type numberHandler struct {
-	data []int
-}
-
-func (i *numberHandler) Range() []int {
-	return i.data
-}
-
-func (i *numberHandler) stringisArray(s string) bool {
-	return strings.Contains(s, "[") && strings.Contains(s, "]")
-}
-
-func (i *numberHandler) stringIsRange(s string) bool {
-	return strings.Contains(s, "-")
-}
-
-func (i *numberHandler) parseNumber(s string) int {
-	num, _ := strconv.Atoi(s)
-	return num
-}
-
-func (i *numberHandler) Set(s string) {
-	q := newQueue()
-	q.Add(s)
-	numbers := []int{}
-	for !q.isEmpty() {
-		current := q.DeQueue()
-		if i.stringisArray(current) {
-			current = strings.TrimPrefix(current, "[")
-			current = strings.TrimSuffix(current, "]")
-			if !strings.Contains(current, ",") {
-				q.Add(current)
-				continue
-			}
-			contents := strings.Split(current, ", ")
-			for _, v := range contents {
-				q.Add(v)
-			}
-			continue
-		}
-		if i.stringIsRange(current) {
-			r := strings.Split(current, "-")
-			low := i.parseNumber(r[0])
-			high := i.parseNumber(r[1])
-			for j := low; j <= high; j++ {
-				numbers = append(numbers, j)
-			}
-			continue
-		}
-		numbers = append(numbers, i.parseNumber(current))
-	}
-	i.data = numbers
-}
-
-func (i *numberHandler) GetLow() int {
-	return 16
-}
-
-func (i *numberHandler) GetHigh() int {
-	return 16
-}
-
-type queue struct {
-	*list.List
-}
-
-func (q *queue) Add(v string) {
-	q.PushBack(v)
-}
-
-func (q *queue) isEmpty() bool {
-	return q.Len() == 0
-}
-
-func (q *queue) DeQueue() string {
-	e := q.Front()
-	q.List.Remove(e)
-	return e.Value.(string)
-}
-
-// New is a new instance of a Queue
-func newQueue() queue {
-	return queue{list.New()}
 }

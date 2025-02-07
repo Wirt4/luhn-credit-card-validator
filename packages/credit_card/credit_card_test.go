@@ -62,7 +62,7 @@ func TestHasCorrectLengthAMX(t *testing.T) {
 			Max: 15,
 		}},
 	}
-	card.SetSequence("1234 5678 9111 1111")
+	card.SetSequence("3434 5678 9111 1111")
 	if card.HasCorrectLength() {
 		t.Errorf("Expected false, got true")
 	}
