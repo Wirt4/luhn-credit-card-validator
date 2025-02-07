@@ -6,13 +6,13 @@ import (
 
 type LuhnValidator struct{}
 
-func (v *LuhnValidator) IsValid(sequence interfaces.DigitSequence) bool {
+func (v *LuhnValidator) IsValid(sequence interfaces.DigitSequence) (bool, error) {
 	if !sequence.HasCorrectLength() {
-		return false
+		return false, nil
 	}
 	var s = sequence.GetSequence()
 	if len(s) < 2 {
-		return false
+		return false, nil
 	}
 
 	lastIndex := len(s) - 1
@@ -28,7 +28,7 @@ func (v *LuhnValidator) IsValid(sequence interfaces.DigitSequence) bool {
 		}
 	}
 
-	return v.modulateDigit(sum) == checkDigit
+	return v.modulateDigit(sum) == checkDigit, nil
 }
 
 func (v *LuhnValidator) sumDigit(digit int) int {

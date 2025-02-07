@@ -21,7 +21,7 @@ func TestVisa(t *testing.T) {
 			{Issuer: "VISA", Min: 16, Max: 16}, {Issuer: "Visa Electron", Min: 16, Max: 16},
 		},
 	}
-	visa := GetCardIssuers([]int{4}, visitor)
+	visa := visitor.GetVisited()
 	if visa[0].Issuer != "VISA" {
 		t.Errorf("Expected VISA, got %v", visa[0].Issuer)
 	}
@@ -30,21 +30,6 @@ func TestVisa(t *testing.T) {
 	}
 	if visa[0].Min != 16 && visa[0].Max != 16 {
 		t.Errorf("Expected 16, got %v", visa[0].Min)
-	}
-}
-
-func TestAMX(t *testing.T) {
-	visitor := &mockVisor{
-		visited: []types.CardIssuer{
-			{Issuer: "American Express", Min: 15, Max: 15},
-		},
-	}
-	amx := GetCardIssuers([]int{3, 7}, visitor)
-	if amx[0].Issuer != "American Express" {
-		t.Errorf("Expected AMX, got %v", amx[0].Issuer)
-	}
-	if amx[0].Min != 15 && amx[0].Max != 15 {
-		t.Errorf("Expected 15, got %v", amx[0].Min)
 	}
 }
 

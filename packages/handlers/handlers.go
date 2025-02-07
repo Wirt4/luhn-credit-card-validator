@@ -11,11 +11,13 @@ import (
 
 type GetHandler struct {
 	validator interfaces.Validator
+	factory   interfaces.Factory
 }
 
-func NewHandler(validator interfaces.Validator) *GetHandler {
+func NewHandler(validator interfaces.Validator, factory interfaces.Factory) *GetHandler {
 	return &GetHandler{
 		validator: validator,
+		factory:   factory,
 	}
 }
 
@@ -28,14 +30,21 @@ func (h *GetHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, message, http.StatusMethodNotAllowed)
 		return
 	}
-	is_valid := h.isValid(errorHandler.GetParsed())
+	is_valid, error := h.isValid(errorHandler.GetParsed())
+	if error != nil {
+		http.Error(w, error.Error(), http.StatusFailedDependency)
+		return
+	}
 	response := types.CreditCardResponse{Valid: is_valid}
 	writeResponse(w, response)
 }
 
-func (h *GetHandler) isValid(payload types.CreditCardRequest) bool {
-	card := factories.CreditCardFactory()
-	card.SetSequence(payload.CreditCardNumber)
+func (h *GetHandler) isValid(payload types.CreditCardRequest) (bool, error) {
+	card := h.factory.NewCreditCard()
+	error := card.SetSequence(payload.CreditCardNumber)
+	if error != nil {
+		return false, error
+	}
 	return h.validator.IsValid(card)
 }
 func writeResponse(w http.ResponseWriter, response types.CreditCardResponse) {

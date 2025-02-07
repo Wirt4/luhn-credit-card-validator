@@ -11,25 +11,30 @@ import (
 	"main.go/packages/types"
 )
 
-func GetInstance() *types.Node {
+func GetInstance() (*types.Node, error) {
 	if singleInstance == nil {
 		lock.Lock()
 		defer lock.Unlock()
 		if singleInstance == nil {
-			singleInstance = buildTree()
+			instance, err := buildTree()
+			if err != nil {
+				return nil, err
+			}
+			singleInstance = instance
 		}
 	}
-	return singleInstance
+	return singleInstance, nil
 }
 
 var lock = &sync.Mutex{}
 var singleInstance *types.Node
 
-func buildTree() *types.Node {
+func buildTree() (*types.Node, error) {
 	pwd, _ := os.Getwd()
 	file, err := os.Open(pwd + "/providers.txt")
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Error opening file")
+		return nil, err
 	}
 	defer file.Close()
 	tree := newTree()
@@ -46,44 +51,7 @@ func buildTree() *types.Node {
 	if err := scanner.Err(); err != nil {
 		fmt.Println(err)
 	}
-	return tree.Root
-}
-
-func temp() *types.Node {
-	tree := newTree()
-	tree.insert("VISA", 4, 16)
-	for _, iin := range []int{34, 37} {
-		tree.insert("American Express", iin, 15)
-	}
-	tree.insert("China T-Union", 31, 19)
-	for _, iin := range []int{60, 65, 81, 82, 508, 353, 356} {
-		tree.insert("RuPay", iin, 16)
-	}
-	tree.insert("BORICA-BANKCARD", 25, 16)
-	for i := 2221; i <= 2720; i++ {
-		tree.insert("Mastercard", i, 16)
-	}
-	for i := 51; i <= 59; i++ {
-		var provider = "Mastercard"
-		if i == 55 {
-			provider += ": Diners Club U.S. and Canada"
-		}
-		tree.insert(provider, i, 16)
-	}
-	for _, iin := range []int{65, 9792} {
-		tree.insert("Troy", iin, 16)
-	}
-	tree.insert("UATP", 1, 15)
-	tree.insert("LankaPay", 357111, 16)
-	for _, iin := range []int{4026, 417500, 4508, 4844, 4913, 4917} {
-		tree.insert("Visa Electron", iin, 16)
-	}
-	for _, iin := range []int{5019, 4571} {
-		tree.insert("Dankort", iin, 16)
-	}
-
-	tree.insertRange("China Union Pay", 62, 16, 19)
-	return tree.Root
+	return tree.Root, nil
 }
 
 func split(entry string) []string {

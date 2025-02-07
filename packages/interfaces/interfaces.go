@@ -8,11 +8,11 @@ import (
 )
 
 type Validator interface {
-	IsValid(sequence DigitSequence) bool
+	IsValid(sequence DigitSequence) (bool, error)
 }
 
 type DigitSequence interface {
-	SetSequence(sequence string)
+	SetSequence(sequence string) error
 	GetSequence() []int
 	HasCorrectLength() bool
 }
@@ -37,4 +37,8 @@ type ErrorHandler[T any] interface {
 type Visitor interface {
 	Traverse(sequence []int, tree *types.Node) //TOOO: set node as type or interface
 	GetVisited() []types.CardIssuer
+}
+
+type Factory interface {
+	NewCreditCard() DigitSequence
 }

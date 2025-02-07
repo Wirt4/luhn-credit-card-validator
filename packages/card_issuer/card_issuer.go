@@ -5,8 +5,11 @@ import (
 	"main.go/packages/types"
 )
 
-func GetCardIssuers(sequence []int, visitor interfaces.Visitor) []types.CardIssuer {
-	issuer_directory := GetInstance()
-	visitor.Traverse(sequence, issuer_directory)
-	return visitor.GetVisited()
+func GetCardIssuers(sequence []int, visitor interfaces.Visitor) ([]types.CardIssuer, error) {
+	singleInstance, error := GetInstance()
+	if error != nil {
+		return nil, error
+	}
+	visitor.Traverse(sequence, singleInstance)
+	return visitor.GetVisited(), nil
 }

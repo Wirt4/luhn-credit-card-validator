@@ -15,15 +15,20 @@ func NewCreditCard() *CreditCard {
 	return &CreditCard{}
 }
 
-func (card *CreditCard) SetSequence(sequence string) {
+func (card *CreditCard) SetSequence(sequence string) error {
 	for _, v := range sequence {
 		if v >= '0' && v <= '9' {
 			card.sequence = append(card.sequence, int(v-'0'))
 		}
 	}
-	if len(card.sequence) == 0 {
-		card.issuers = card_issuer.GetCardIssuers(card.sequence, &issuer_visitor.Visitor{})
+	if len(card.issuers) == 0 {
+		issuers, error := card_issuer.GetCardIssuers(card.sequence, &issuer_visitor.Visitor{})
+		if error != nil {
+			return error
+		}
+		card.issuers = issuers
 	}
+	return nil
 }
 
 func (card CreditCard) GetSequence() []int {

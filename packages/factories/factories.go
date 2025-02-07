@@ -11,6 +11,8 @@ func ErrorHandlerFactory() interfaces.ErrorHandler[types.CreditCardRequest] {
 	return error_handlers.NewErrorHandler()
 }
 
-func CreditCardFactory() interfaces.DigitSequence {
+type CreditCardFactory struct{}
+
+func (c *CreditCardFactory) NewCreditCard() interfaces.DigitSequence {
 	return credit_card.NewCreditCard()
 }
