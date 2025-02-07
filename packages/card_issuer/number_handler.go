@@ -69,9 +69,9 @@ func (i *numberHandler) Set(s string) {
 }
 
 func (i *numberHandler) GetLow() int {
-	return 16
+	return i.data[0]
 }
 
 func (i *numberHandler) GetHigh() int {
-	return 16
+	return i.data[len(i.data)-1]
 }

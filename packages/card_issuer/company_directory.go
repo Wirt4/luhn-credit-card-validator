@@ -37,8 +37,9 @@ func buildTree() *types.Node {
 	for scanner.Scan() {
 		entry := ParseEntry(scanner.Text())
 		for _, iin := range entry.IINs {
-			fmt.Printf("name %v\nIINs %v\nmin length %v\nmax length %v\n\n", entry.Name, entry.IINs, entry.MinSequenceLength, entry.MaxSequenceLength)
-			tree.insertRange(entry.Name, iin, entry.MinSequenceLength, entry.MaxSequenceLength)
+			min := entry.MinSequenceLength
+			max := entry.MaxSequenceLength
+			tree.insertRange(entry.Name, iin, min, max)
 		}
 	}
 
@@ -100,7 +101,7 @@ func split(entry string) []string {
 }
 
 func ParseEntry(entry string) types.ProviderData {
-	params := split(entry) //splits on all spaces
+	params := split(entry)
 	provider_name := strings.Builder{}
 	iins := &numberHandler{}
 	sequence_range := &numberHandler{}
