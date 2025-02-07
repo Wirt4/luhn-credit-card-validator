@@ -1,7 +1,6 @@
 package card_issuer
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 	"sync"
@@ -83,41 +82,60 @@ func split(entry string) []string {
 	}
 	return ans
 }
+
 func ParseEntry(entry string) types.ProviderData {
 	params := split(entry)
-	name_builder := strings.Builder{}
-	done := false
-	var i int = 0
-	for !done {
-		fmt.Println(params[i])
-		if string(params[i][0]) == "[" {
-			done = true
-			break
-		}
+	provider_name := strings.Builder{}
+	iins := &numberHandler{}
+	sequence_range := &numberHandler{}
+	sequence_range.Set(params[len(params)-1])
+	iins.Set(params[len(params)-2])
 
-		if isDigit(params[i][0]) {
-			done = true
-			break
+	for i := 0; i < len(params)-2; i++ {
+		if i != 0 {
+			provider_name.WriteString(" ")
 		}
-		if name_builder.Len() > 0 {
-			name_builder.WriteString(" ")
-		}
-		name_builder.WriteString(params[i])
-		i++
+		provider_name.WriteString(params[i])
+
 	}
-	fmt.Printf("Current index is %v", params[i])
-	iin, _ := strconv.Atoi(params[i])
-	iins := []int{iin}
 
 	return types.ProviderData{
-		Name:              name_builder.String(),
-		IINs:              iins,
-		MaxSequenceLength: 16,
-		MinSequenceLength: 16,
+		Name:              provider_name.String(),
+		IINs:              iins.Range(),
+		MaxSequenceLength: sequence_range.GetHigh(),
+		MinSequenceLength: sequence_range.GetLow(),
 	}
 
 }
 
-func isDigit(c byte) bool {
-	return c >= '0' && c <= '9'
+type numberHandler struct {
+	data []int
+}
+
+func (i *numberHandler) Range() []int {
+	return i.data
+}
+
+func (i *numberHandler) Set(s string) {
+	//case one, is not bracketed
+	if !strings.Contains(s, "[") && !strings.Contains(s, "-") {
+		num, _ := strconv.Atoi(s)
+		i.data = []int{num}
+		return
+	}
+	//case: values are hypen-separated
+	num_strings := strings.Split(s, "-")
+	low, _ := strconv.Atoi(num_strings[0])
+	high, _ := strconv.Atoi(num_strings[1])
+	for j := low; j <= high; j++ {
+		i.data = append(i.data, j)
+	}
+}
+
+func (i *numberHandler) GetLow() int {
+	return 16
+}
+
+func (i *numberHandler) GetHigh() int {
+	return 16
 }

@@ -73,3 +73,16 @@ func TestParseEntryDinersClub(t *testing.T) {
 		t.Errorf("Expected %v, got %v", expected, actual)
 	}
 }
+
+func TestParsedEntryMultipleIINs(t *testing.T) {
+	expected := types.ProviderData{
+		Name:              "Mastercard",
+		IINs:              []int{2221, 2222, 2223},
+		MaxSequenceLength: 16,
+		MinSequenceLength: 16,
+	}
+	actual := ParseEntry("Mastercard 2221-2223 16")
+	if !reflect.DeepEqual(expected, actual) {
+		t.Errorf("Expected %v, got %v", expected, actual)
+	}
+}
