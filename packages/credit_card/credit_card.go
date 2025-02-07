@@ -21,7 +21,9 @@ func (card *CreditCard) SetSequence(sequence string) {
 			card.sequence = append(card.sequence, int(v-'0'))
 		}
 	}
-	card.issuers = card_issuer.GetCardIssuers(card.sequence, &issuer_visitor.Visitor{})
+	if len(card.sequence) == 0 {
+		card.issuers = card_issuer.GetCardIssuers(card.sequence, &issuer_visitor.Visitor{})
+	}
 }
 
 func (card CreditCard) GetSequence() []int {

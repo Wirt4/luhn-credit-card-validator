@@ -69,7 +69,12 @@ func TestHasCorrectLengthAMX(t *testing.T) {
 }
 
 func TestHasCorrectLengthWithZero(t *testing.T) {
-	card := &CreditCard{}
+	card := &CreditCard{
+		issuers: []types.CardIssuer{{
+			Min: 16,
+			Max: 16,
+		}},
+	}
 	card.SetSequence("4234 5678 9111 1101")
 	if !card.HasCorrectLength() {
 		t.Errorf("Expected true, got false")
@@ -77,19 +82,32 @@ func TestHasCorrectLengthWithZero(t *testing.T) {
 }
 
 func TestCorrectLengthWithMultipleHits(t *testing.T) {
-	card := &CreditCard{}
-	//Integrated with AMX code
+	card := &CreditCard{
+		issuers: []types.CardIssuer{{
+			Min: 15,
+			Max: 15,
+		},
+			{
+				Min: 15,
+				Max: 15,
+			}},
+	}
 	card.SetSequence("3456 5678 9111 198")
 	if !card.HasCorrectLength() {
 		t.Errorf("Expected true, got false")
 	}
-	if len(card.issuers) != 1 {
-		t.Errorf("Expected 1, got %d", len(card.issuers))
+	if len(card.issuers) != 2 {
+		t.Errorf("Expected 2, got %d", len(card.issuers))
 	}
 }
 
 func TestMiddleofRange(t *testing.T) {
-	card := &CreditCard{}
+	card := &CreditCard{
+		issuers: []types.CardIssuer{{
+			Min: 16,
+			Max: 19,
+		}},
+	}
 	//Integrated with China Union Pay code
 	card.SetSequence("6256 5678 9111 1989 8")
 	if !card.HasCorrectLength() {
