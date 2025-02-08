@@ -18,7 +18,7 @@ type mockCreditCard struct {
 
 type mockFactory struct{}
 
-func (f *mockFactory) NewCreditCard() interfaces.DigitSequence {
+func (f *mockFactory) Create() interfaces.DigitSequence {
 	return &mockCreditCard{}
 }
 

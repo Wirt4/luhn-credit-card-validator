@@ -40,7 +40,7 @@ type Visitor interface {
 }
 
 type DigitSequenceFactory interface {
-	NewCreditCard() DigitSequence
+	Create() DigitSequence
 }
 
 type ErrorHandlerFactory interface {

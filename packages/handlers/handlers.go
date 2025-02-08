@@ -41,7 +41,7 @@ func (h *GetHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *GetHandler) isValid(payload types.CreditCardRequest) (bool, error) {
-	card := h.factory.NewCreditCard()
+	card := h.factory.Create()
 	error := card.SetSequence(payload.CreditCardNumber)
 	if error != nil {
 		return false, error
