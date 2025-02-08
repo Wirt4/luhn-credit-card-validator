@@ -11,6 +11,10 @@ type CreditCard struct {
 	issuers  []types.CardIssuer
 }
 
+func (card *CreditCard) Issuers() []types.CardIssuer {
+	return card.issuers
+}
+
 func NewCreditCard() *CreditCard {
 	return &CreditCard{}
 }

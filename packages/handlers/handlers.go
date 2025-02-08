@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strings"
 
 	"main.go/packages/factories"
 	"main.go/packages/interfaces"
@@ -31,17 +33,24 @@ func (h *GetHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, message, http.StatusMethodNotAllowed)
 		return
 	}
-	is_valid, error := h.isValid(errorHandler.GetParsed())
+	card := h.factory.Create()
+	is_valid, error := h.isValid(errorHandler.GetParsed(), card)
 	if error != nil {
 		http.Error(w, error.Error(), http.StatusFailedDependency)
 		return
 	}
-	response := types.CreditCardResponse{Valid: is_valid}
+	i := []string{}
+	issuers := card.Issuers()
+	for _, issuer := range issuers {
+		fmt.Println(issuer.Issuer)
+		i = append(i, issuer.Issuer)
+	}
+	response := types.CreditCardResponse{Valid: is_valid, Issuer: strings.Join(i, " ")}
 	writeResponse(w, response)
 }
 
-func (h *GetHandler) isValid(payload types.CreditCardRequest) (bool, error) {
-	card := h.factory.Create()
+func (h *GetHandler) isValid(payload types.CreditCardRequest, card interfaces.DigitSequence) (bool, error) {
+	fmt.Print("Card: ", card)
 	error := card.SetSequence(payload.CreditCardNumber)
 	if error != nil {
 		return false, error

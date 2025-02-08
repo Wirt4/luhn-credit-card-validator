@@ -15,7 +15,10 @@ type DigitSequence interface {
 	SetSequence(sequence string) error
 	GetSequence() []int
 	HasCorrectLength() bool
+	Issuers() []types.CardIssuer
 }
+
+//TODO: Either rename the interface or compose it with Card Interface
 
 type Configuration interface {
 	GetConfiguration() map[string]string
