@@ -8,10 +8,10 @@ import (
 )
 
 type Validator interface {
-	IsValid(sequence DigitSequence) (bool, error)
+	IsValid(sequence CreditCardInterface) (bool, error)
 }
 
-type DigitSequence interface {
+type CreditCardInterface interface {
 	SetSequence(sequence string) error
 	GetSequence() []int
 	HasCorrectLength() bool
@@ -43,7 +43,7 @@ type Visitor interface {
 }
 
 type DigitSequenceFactory interface {
-	Create() DigitSequence
+	Create() CreditCardInterface
 }
 
 type ErrorHandlerFactory interface {

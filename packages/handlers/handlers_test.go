@@ -16,9 +16,13 @@ type mockCreditCard struct {
 	sequence []int
 }
 
+func (c *mockCreditCard) Issuers() []types.CardIssuer {
+	return nil
+}
+
 type mockFactory struct{}
 
-func (f *mockFactory) Create() interfaces.DigitSequence {
+func (f *mockFactory) Create() interfaces.CreditCardInterface {
 	return &mockCreditCard{}
 }
 
@@ -40,11 +44,11 @@ func (c *mockCreditCard) HasCorrectLength() bool {
 }
 
 type mockValidator struct {
-	calledWith interfaces.DigitSequence
+	calledWith interfaces.CreditCardInterface
 	valid      bool
 }
 
-func (m *mockValidator) IsValid(sequence interfaces.DigitSequence) (bool, error) {
+func (m *mockValidator) IsValid(sequence interfaces.CreditCardInterface) (bool, error) {
 	m.calledWith = sequence
 	return m.valid, nil
 }

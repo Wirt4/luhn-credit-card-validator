@@ -1,6 +1,10 @@
 package luhn
 
-import "testing"
+import (
+	"testing"
+
+	"main.go/packages/types"
+)
 
 type mockDigitSeqence struct {
 	sequence            []int
@@ -8,6 +12,10 @@ type mockDigitSeqence struct {
 }
 
 func (m *mockDigitSeqence) SetSequence(sequence string) error {
+	return nil
+}
+
+func (m *mockDigitSeqence) Issuers() []types.CardIssuer {
 	return nil
 }
 

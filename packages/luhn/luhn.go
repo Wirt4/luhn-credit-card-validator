@@ -6,7 +6,7 @@ import (
 
 type LuhnValidator struct{}
 
-func (v *LuhnValidator) IsValid(sequence interfaces.DigitSequence) (bool, error) {
+func (v *LuhnValidator) IsValid(sequence interfaces.CreditCardInterface) (bool, error) {
 	if !sequence.HasCorrectLength() {
 		return false, nil
 	}

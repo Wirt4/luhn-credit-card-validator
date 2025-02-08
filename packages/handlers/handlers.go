@@ -48,7 +48,7 @@ func (h *GetHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 	writeResponse(w, response)
 }
 
-func (h *GetHandler) isValid(payload types.CreditCardRequest, card interfaces.DigitSequence) (bool, error) {
+func (h *GetHandler) isValid(payload types.CreditCardRequest, card interfaces.CreditCardInterface) (bool, error) {
 	fmt.Print("Card: ", card)
 	error := card.SetSequence(payload.CreditCardNumber)
 	if error != nil {
