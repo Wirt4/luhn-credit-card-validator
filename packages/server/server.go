@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"main.go/packages/factories"
 	"main.go/packages/handlers"
 	"main.go/packages/luhn"
 )
@@ -18,7 +19,7 @@ func NewServer(port string) *Server {
 }
 
 func (s *Server) ListenAndServe() {
-	handler := handlers.NewHandler(&luhn.LuhnValidator{})
+	handler := handlers.NewHandler(&luhn.LuhnValidator{}, &factories.CreditCardFactory{})
 	http.HandleFunc("/validate_credit_card/", handler.HandleRequest)
 	fmt.Println("Server is listening on port", s.port)
 	log.Fatal(http.ListenAndServe(":"+s.port, nil))

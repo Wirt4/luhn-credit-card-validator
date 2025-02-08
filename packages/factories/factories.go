@@ -7,10 +7,15 @@ import (
 	"main.go/packages/types"
 )
 
-func ErrorHandlerFactory() interfaces.ErrorHandler[types.CreditCardPayload] {
+type ErrorHandlerFactory struct {
+}
+
+func (*ErrorHandlerFactory) Create() interfaces.ErrorHandler[types.CreditCardRequest] {
 	return error_handlers.NewErrorHandler()
 }
 
-func CreditCardFactory() interfaces.DigitSequence {
-	return &credit_card.CreditCard{}
+type CreditCardFactory struct{}
+
+func (c *CreditCardFactory) Create() interfaces.CreditCardInterface {
+	return credit_card.NewCreditCard()
 }

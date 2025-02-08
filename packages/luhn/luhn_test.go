@@ -1,14 +1,22 @@
 package luhn
 
-import "testing"
+import (
+	"testing"
+
+	"main.go/packages/types"
+)
 
 type mockDigitSeqence struct {
 	sequence            []int
 	correctNumberLength bool
 }
 
-func (m *mockDigitSeqence) SetSequence(sequence string) {
+func (m *mockDigitSeqence) SetSequence(sequence string) error {
+	return nil
+}
 
+func (m *mockDigitSeqence) Issuers() []types.CardIssuer {
+	return nil
 }
 
 func (m *mockDigitSeqence) GetSequence() []int {
@@ -26,7 +34,7 @@ func TestIsValidSmallCase(t *testing.T) {
 	}
 
 	validaor := &LuhnValidator{}
-	actual := validaor.IsValid(mockNumbers)
+	actual, _ := validaor.IsValid(mockNumbers)
 
 	if actual != true {
 		t.Errorf("%v should be valid", mockNumbers.GetSequence())
@@ -40,7 +48,7 @@ func TestIsInvalid(t *testing.T) {
 	}
 
 	validaor := &LuhnValidator{}
-	actual := validaor.IsValid(mockNumbers)
+	actual, _ := validaor.IsValid(mockNumbers)
 
 	if actual != false {
 		t.Errorf("%v should not be valid", mockNumbers.GetSequence())
@@ -54,7 +62,7 @@ func TestIsValid(t *testing.T) {
 	}
 
 	validaor := &LuhnValidator{}
-	actual := validaor.IsValid(mockNumbers)
+	actual, _ := validaor.IsValid(mockNumbers)
 
 	if actual != true {
 		t.Errorf("%v should be valid", mockNumbers.GetSequence())
@@ -68,7 +76,7 @@ func TestEmptySequence(t *testing.T) {
 	}
 
 	validaor := &LuhnValidator{}
-	actual := validaor.IsValid(mockNumbers)
+	actual, _ := validaor.IsValid(mockNumbers)
 
 	if actual != false {
 		t.Errorf("%v should not be valid", mockNumbers.GetSequence())
@@ -82,7 +90,7 @@ func TestIsInvalidLength(t *testing.T) {
 	}
 
 	validaor := &LuhnValidator{}
-	actual := validaor.IsValid(mockNumbers)
+	actual, _ := validaor.IsValid(mockNumbers)
 
 	if actual != false {
 		t.Errorf("%v should not be valid", mockNumbers.GetSequence())

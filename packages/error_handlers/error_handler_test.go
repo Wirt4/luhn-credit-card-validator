@@ -54,7 +54,7 @@ func TestCheckBody(t *testing.T) {
 		expectedError   bool
 		expectedMessage string
 		expectedCode    int
-		expectedParsed  types.CreditCardPayload
+		expectedParsed  types.CreditCardRequest
 	}{
 		{
 			name:            "HasError already true",
@@ -63,7 +63,7 @@ func TestCheckBody(t *testing.T) {
 			expectedError:   true,
 			expectedMessage: "",
 			expectedCode:    http.StatusOK,
-			expectedParsed:  types.CreditCardPayload{},
+			expectedParsed:  types.CreditCardRequest{},
 		},
 		{
 			name:            "Error reading body",
@@ -72,7 +72,7 @@ func TestCheckBody(t *testing.T) {
 			expectedError:   true,
 			expectedMessage: "Error reading request body",
 			expectedCode:    http.StatusInternalServerError,
-			expectedParsed:  types.CreditCardPayload{},
+			expectedParsed:  types.CreditCardRequest{},
 		},
 		{
 			name:            "Error parsing body",
@@ -81,7 +81,7 @@ func TestCheckBody(t *testing.T) {
 			expectedError:   true,
 			expectedMessage: "Error parsing request body",
 			expectedCode:    http.StatusBadRequest,
-			expectedParsed:  types.CreditCardPayload{},
+			expectedParsed:  types.CreditCardRequest{},
 		},
 		{
 			name:            "Successful parsing",
@@ -90,7 +90,7 @@ func TestCheckBody(t *testing.T) {
 			expectedError:   false,
 			expectedMessage: "",
 			expectedCode:    http.StatusOK,
-			expectedParsed:  types.CreditCardPayload{CreditCardNumber: "1234 5678 9012 3456"},
+			expectedParsed:  types.CreditCardRequest{CreditCardNumber: "1234 5678 9012 3456"},
 		},
 	}
 
