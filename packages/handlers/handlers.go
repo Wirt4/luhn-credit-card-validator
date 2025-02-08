@@ -11,10 +11,10 @@ import (
 
 type GetHandler struct {
 	validator interfaces.Validator
-	factory   interfaces.Factory
+	factory   interfaces.DigitSequenceFactory
 }
 
-func NewHandler(validator interfaces.Validator, factory interfaces.Factory) *GetHandler {
+func NewHandler(validator interfaces.Validator, factory interfaces.DigitSequenceFactory) *GetHandler {
 	return &GetHandler{
 		validator: validator,
 		factory:   factory,
@@ -22,7 +22,8 @@ func NewHandler(validator interfaces.Validator, factory interfaces.Factory) *Get
 }
 
 func (h *GetHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
-	errorHandler := factories.ErrorHandlerFactory()
+	errHandlerFactory := &factories.ErrorHandlerFactory{}
+	errorHandler := errHandlerFactory.Create()
 	errorHandler.CheckMethod(r.Method)
 	errorHandler.CheckBody(r.Body)
 	if errorHandler.HasError() {

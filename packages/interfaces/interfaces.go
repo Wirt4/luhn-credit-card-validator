@@ -39,6 +39,10 @@ type Visitor interface {
 	GetVisited() []types.CardIssuer
 }
 
-type Factory interface {
+type DigitSequenceFactory interface {
 	NewCreditCard() DigitSequence
+}
+
+type ErrorHandlerFactory interface {
+	Create() ErrorHandler[types.CreditCardRequest]
 }
