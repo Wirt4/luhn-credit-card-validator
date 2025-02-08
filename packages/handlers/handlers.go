@@ -42,7 +42,6 @@ func (h *GetHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 	i := []string{}
 	issuers := card.Issuers()
 	for _, issuer := range issuers {
-		fmt.Println(issuer.Issuer)
 		i = append(i, issuer.Issuer)
 	}
 	response := types.CreditCardResponse{Valid: is_valid, Issuer: strings.Join(i, " ")}
