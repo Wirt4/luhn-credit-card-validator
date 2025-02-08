@@ -36,6 +36,17 @@ func GetInstance() (*types.Node, error) {
 var lock = &sync.Mutex{}
 var singleInstance *types.Node
 
+func (t *Tree) InsertRange(issuerName string, iin int, lowestSequenceLength int, highestSequenceLength int) {
+	t.Root = insertNode(
+		strconv.Itoa(iin),
+		&types.CardIssuer{
+			Min:    lowestSequenceLength,
+			Max:    highestSequenceLength,
+			Issuer: issuerName,
+		},
+		t.Root)
+}
+
 func scanFileIntoTree() (*types.Node, error) {
 	pwd, _ := os.Getwd()
 	file, err := os.Open(pwd + "/providers.txt")
@@ -83,15 +94,4 @@ func insertNode(iin string, issuer *types.CardIssuer, n *types.Node) *types.Node
 		n.Children[msd] = insertNode(iin, issuer, n.Children[msd])
 	}
 	return n
-}
-
-func (t *Tree) InsertRange(issuerName string, iin int, lowestSequenceLength int, highestSequenceLength int) {
-	t.Root = insertNode(
-		strconv.Itoa(iin),
-		&types.CardIssuer{
-			Min:    lowestSequenceLength,
-			Max:    highestSequenceLength,
-			Issuer: issuerName,
-		},
-		t.Root)
 }
