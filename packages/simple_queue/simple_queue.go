@@ -1,4 +1,4 @@
-package card_issuer
+package simple_queue
 
 import "container/list"
 
@@ -6,7 +6,7 @@ func (q *queue) Add(v string) {
 	q.PushBack(v)
 }
 
-func (q *queue) isEmpty() bool {
+func (q *queue) IsEmpty() bool {
 	return q.Len() == 0
 }
 
@@ -16,7 +16,7 @@ func (q *queue) DeQueue() string {
 	return e.Value.(string)
 }
 
-func newQueue() queue {
+func NewQueue() queue {
 	return queue{list.New()}
 }
 
