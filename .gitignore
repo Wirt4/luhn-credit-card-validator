@@ -24,3 +24,6 @@ go.work.sum
 # env file
 .env
 *.bkp
+
+# mac-specific artifact
+.DS_Store
